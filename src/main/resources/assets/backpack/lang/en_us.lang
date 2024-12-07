@@ -1,0 +1,14 @@
+# Item
+item.backpack.backpack.name=Backpack
+
+# Tab
+itemGroup.Backpack=Backpack
+
+# BackpackGui
+container.backpack=backpack
+
+# DescriptionOfTheKeyBindings
+key.openBackpack=openBackpack
+
+# CustomKeybindingClassifications
+key.categories.backpack=Backpack

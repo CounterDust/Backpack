@@ -1,0 +1,14 @@
+# 物品
+item.backpack.backpack.name=背包
+
+# 标签
+itemGroup.Backpack=背包
+
+# 背包gui
+container.backpack=背包
+
+# 按键绑定描述
+key.openBackpack=打开背包
+
+# 自定义键绑定分类
+key.categories.backpack=背包
