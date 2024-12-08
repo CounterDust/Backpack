@@ -43,9 +43,6 @@ public class BackpackItem extends ModItem {
             try {
                 // 打开背包GUI
                 playerIn.openGui(Backpack.INSTANCE, Backpack.GUI_ID_BACKPACK, worldIn, slotIndex, 0, 0);
-
-                // 记录日志
-                BackpackItem.LOGGER.info("Backpack GUI opened for player {} in slot {}.", playerIn.getName(), slotIndex);
             } catch (Exception e) {
                 BackpackItem.LOGGER.error("Failed to open backpack GUI for player {}: {}", playerIn.getName(), e.getMessage());
                 return new ActionResult<>(EnumActionResult.FAIL, itemStack);
@@ -63,6 +60,7 @@ public class BackpackItem extends ModItem {
      * @return 槽位索引
      */
     private int findSlotIndex(EntityPlayer player, EnumHand hand) {
-        return hand == EnumHand.MAIN_HAND ? player.inventory.currentItem : 40; // 40 是副手的槽位索引
+        // 40 是副手的槽位索引
+        return hand == EnumHand.MAIN_HAND ? player.inventory.currentItem : 40;
     }
 }

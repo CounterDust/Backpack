@@ -18,6 +18,8 @@ archivesBaseName = "modid"
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
+
+    options.encoding = 'UTF-8'  // 确保编译时使用 UTF-8 编码
 }
 
 minecraft {
@@ -75,3 +77,7 @@ processResources {
         exclude 'mcmod.info'
     }
 }
+
+sourceSets {main{output.resourcesDir=output.classesDir}}
+
+jar {duplicatesStrategy = DuplicatesStrategy.EXCLUDE}

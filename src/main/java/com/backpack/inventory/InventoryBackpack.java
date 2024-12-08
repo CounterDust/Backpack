@@ -1,6 +1,5 @@
 package com.backpack.inventory;
 
-import com.backpack.item.BackpackItem;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -37,30 +36,34 @@ public class InventoryBackpack implements IInventory {
      * 从 NBT 数据中读取库存信息。
      */
     private void readFromNBT() {
-        if (this.backpackStack.hasTagCompound()) {  // 使用 hasTagCompound 检查 NBT 标签
-            NBTTagCompound nbt = this.backpackStack.getTagCompound();  // 获取 NBT 标签
 
-            LOGGER.info("Reading inventory from NBT: {}", nbt);
+        // 使用 hasTagCompound 检查 NBT 标签
+        if (this.backpackStack.hasTagCompound()) {
+            // 获取 NBT 标签
+            NBTTagCompound nbt = this.backpackStack.getTagCompound();
 
             // 检查 NBT 标签是否包含 "Items" 列表
-            if (nbt.hasKey("Items", Constants.NBT.TAG_LIST)) {  // 使用 hasKey 方法
-                NBTTagList itemList = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);  // 获取 NBTTagList
-                LOGGER.info("Found {} items in the backpack.", itemList.tagCount());  // 使用 tagCount() 方法
+            // 使用 hasKey 方法
+            if (nbt.hasKey("Items", Constants.NBT.TAG_LIST)) {
+                NBTTagList itemList = nbt.getTagList("Items", Constants.NBT.TAG_COMPOUND);
 
+                // 获取 NBTTagList
                 for (int i = 0; i < itemList.tagCount(); i++) {
                     try {
-                        NBTTagCompound itemTag = itemList.getCompoundTagAt(i);  // 获取 NBTTagCompound
+                        // 获取 NBTTagCompound
+                        NBTTagCompound itemTag = itemList.getCompoundTagAt(i);
 
                         // 检查 "Slot" 字段是否存在
-                        if (itemTag.hasKey("Slot", Constants.NBT.TAG_BYTE)) {  // 使用 hasKey 方法
+                        // 使用 hasKey 方法
+                        if (itemTag.hasKey("Slot", Constants.NBT.TAG_BYTE)) {
                             byte slotByte = itemTag.getByte("Slot");
-                            int slot = slotByte & 0xFF;  // 确保slot为非负数
+                            // 确保slot为非负数
+                            int slot = slotByte & 0xFF;
 
                             if (slot < this.getSizeInventory()) {
                                 // 使用 ItemStack.loadItemStackFromNBT 加载物品堆
                                 ItemStack stack = new ItemStack(itemTag);
                                 this.inventoryContents.set(slot, stack);
-                                LOGGER.info("Loaded item {} into slot {}", stack, slot);
                             } else {
                                 LOGGER.warn("Invalid slot index: {}", slot);
                             }
@@ -68,15 +71,10 @@ public class InventoryBackpack implements IInventory {
                             LOGGER.warn("Item tag missing 'Slot' key: {}", itemTag);
                         }
                     } catch (Exception e) {
-                        // 使用 LOGGER.error 记录详细的错误信息
                         LOGGER.error("Error reading item at index {}: {}", i, e.getMessage(), e);
                     }
                 }
-            } else {
-                LOGGER.info("No 'Items' list found in NBT.");
             }
-        } else {
-            LOGGER.info("Backpack stack has no NBT data.");
         }
     }
 
@@ -102,6 +100,7 @@ public class InventoryBackpack implements IInventory {
         nbt.setTag("Items", itemList);
         this.backpackStack.setTagCompound(nbt);
     }
+
     /**
      * 获取库存名称。
      *
@@ -308,11 +307,12 @@ public class InventoryBackpack implements IInventory {
     /**
      * 设置指定ID的字段值。
      *
-     * @param id   字段ID
+     * @param id    字段ID
      * @param value 字段值
      */
     @Override
-    public void setField(int id, int value) {}
+    public void setField(int id, int value) {
+    }
 
     /**
      * 获取字段数量。

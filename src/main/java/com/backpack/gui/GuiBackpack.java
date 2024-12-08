@@ -86,7 +86,6 @@ public class GuiBackpack extends GuiContainer {
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
-        GuiBackpack.LOGGER.info("Backpack GUI has been closed.");
     }
 
     // 可选：处理鼠标单击事件

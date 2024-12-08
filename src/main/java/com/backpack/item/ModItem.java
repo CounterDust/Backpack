@@ -3,7 +3,6 @@ package com.backpack.item;
 import com.backpack.register.RegisterItem;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 

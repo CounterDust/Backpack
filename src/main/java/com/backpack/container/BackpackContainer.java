@@ -145,10 +145,9 @@ public class BackpackContainer extends Container {
      */
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
-        LOGGER.info("Backpack GUI has been closed.");
         super.onContainerClosed(playerIn);
         // 当 GUI 关闭时，保存背包库存数据
-        this.backpackInventory.markDirty();  // 确保所有更改都被保存
+        this.backpackInventory.markDirty();
         this.backpackInventory.writeToNBT();
     }
 

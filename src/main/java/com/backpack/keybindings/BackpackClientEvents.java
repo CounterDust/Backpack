@@ -29,7 +29,6 @@ public class BackpackClientEvents {
 
             // 检查玩家对象是否为空
             if (player != null) {
-                BackpackClientEvents.LOGGER.info("KeyBinding 'Open Backpack' is pressed by player: {}", player.getName());
 
                 // 遍历玩家物品栏中的所有槽位，查找第一个背包物品
                 for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
@@ -40,19 +39,17 @@ public class BackpackClientEvents {
                         // 找到背包物品所在的槽位索引
 
                         // 发送请求给服务器，请求打开背包 GUI，并传递槽位索引
-                        BackpackClientEvents.LOGGER.info("Requesting server to open the backpack GUI for slot {}.", i);
                         PacketHandler.sendToServer(new OpenBackpackMessage(i));
 
                         // 找到第一个背包后，立即退出循环，避免继续遍历
                         return;
                     }
                 }
-
                 // 如果没有找到背包物品，记录日志
-                BackpackClientEvents.LOGGER.info("Player {} does not have a backpack in their inventory.", player.getName());
+                LOGGER.info("Player {} does not have a backpack in their inventory.", player.getName());
             } else {
                 // 如果玩家对象为空，记录错误日志
-                BackpackClientEvents.LOGGER.error("Player object is null.");
+                LOGGER.error("Player object is null.");
             }
         }
     }
