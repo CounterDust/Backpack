@@ -68,53 +68,14 @@ public class GuiBackpack extends GuiContainer {
         drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 
-    /**
-     *初始化GUI。
-     *在这个方法中可以添加额外的GUI元素，如按钮等。
-     */
-    @Override
-    public void initGui() {
-        super.initGui();
-        // 如果您有任何按钮或其他元素要添加，请在此处添加。
-        // 示例： buttonList.add（new GuiButton（0， guiLeft + 5， guiTop + 5， 50， 20， “Button”））;
-    }
-
-    /**
-     *在GUI关闭时调用。
-     *可以在这个方法中添加一些清理代码。
-     */
-    @Override
-    public void onGuiClosed() {
-        super.onGuiClosed();
-    }
-
-    // 可选：处理鼠标单击事件
-    /**
-     *处理鼠标点击事件。
-     *可以在这个方法中添加额外的鼠标点击事件处理。
-     *@param mouseX 鼠标X坐标
-     *@param mouseY 鼠标Y坐标
-     *@param mouseButton 被按下的鼠标按钮
-     */
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        // 可以在此处添加对鼠标单击的其他处理。
-    }
-
-    // 可选：处理键类型事件
-    /**
-     *处理键盘输入事件。
-     *这里示例了当按下打开背包键时关闭GUI。
-     *@param typedChar 输入的字符
-     *@param keyCode 输入的键码
-     */
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
+        // 检查是否是打开背包的键被按下
         if (keyCode == KeyBindings.OPEN_BACKPACK.getKeyCode()) {
-            // 关闭 GUI
-            this.mc.displayGuiScreen(null);
+            // 关闭背包 GUI
+            this.mc.player.closeScreen();
         } else {
+            // 如果不是关闭背包的键，则调用父类的 keyTyped 方法
             super.keyTyped(typedChar, keyCode);
         }
     }
