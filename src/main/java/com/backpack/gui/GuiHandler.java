@@ -41,7 +41,7 @@ public class GuiHandler implements IGuiHandler {
             ItemStack backpackItem = player.inventory.getStackInSlot(x);  // x 是槽位索引
 
             if (!backpackItem.isEmpty() && backpackItem.getItem() instanceof BackpackItem) {
-                return new GuiBackpack(player.inventory, new InventoryBackpack(backpackItem));
+                return new GuiBackpack(player.inventory, new InventoryBackpack(backpackItem),x);
             } else {
                 LOGGER.warn("client,Player {} does not have a backpack in slot {}.", player.getName(), x);
             }
