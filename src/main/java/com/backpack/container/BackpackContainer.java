@@ -148,11 +148,11 @@ public class BackpackContainer extends Container {
         super.onContainerClosed(playerIn);
 
         // 检查背包库存是否有效
-        if (this.backpackInventory != null && this.backpackInventory.getBackpackStack() != null) {
+        if (this.backpackInventory != null) {
             // 标记背包为脏，确保库存数据被保存到 NBT 中
             this.backpackInventory.markDirty();
         } else {
-            LOGGER.warn("Backpack inventory or ItemStack is null when closing container for player: {}", playerIn.getName());
+            LOGGER.warn("Backpack inventory is null when closing container for player: {}", playerIn.getName());
         }
     }
 

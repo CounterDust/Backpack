@@ -279,7 +279,7 @@ public class InventoryBackpack implements IInventory {
         this.customName = false;
 
         // 从 NBT 数据中读取库存信息
-        if (backpackStack != null && backpackStack.hasTagCompound()) {
+        if (backpackStack.hasTagCompound()) {
             NBTTagCompound nbt = backpackStack.getTagCompound();
             this.readFromNBT(nbt);
         }
