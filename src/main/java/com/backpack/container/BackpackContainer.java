@@ -155,13 +155,4 @@ public class BackpackContainer extends Container {
             LOGGER.warn("Backpack inventory is null when closing container for player: {}", playerIn.getName());
         }
     }
-
-    /**
-     * 获取背包库存实例
-     *
-     * @return 背包库存
-     */
-    public InventoryBackpack getBackpackInventory() {
-        return this.backpackInventory;
-    }
 }
