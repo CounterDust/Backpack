@@ -146,9 +146,14 @@ public class BackpackContainer extends Container {
     @Override
     public void onContainerClosed(EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
-        // 当 GUI 关闭时，保存背包库存数据
-        this.backpackInventory.markDirty();
-        this.backpackInventory.writeToNBT();
+
+        // 检查背包库存是否有效
+        if (this.backpackInventory != null && this.backpackInventory.getBackpackStack() != null) {
+            // 标记背包为脏，确保库存数据被保存到 NBT 中
+            this.backpackInventory.markDirty();
+        } else {
+            LOGGER.warn("Backpack inventory or ItemStack is null when closing container for player: {}", playerIn.getName());
+        }
     }
 
     /**

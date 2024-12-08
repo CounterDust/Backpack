@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
-        maven { url = "http://files.minecraftforge.net/maven" }
+        maven { url = "https://files.minecraftforge.net/maven" }
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
@@ -78,6 +78,7 @@ processResources {
     }
 }
 
-sourceSets {main{output.resourcesDir=output.classesDir}}
+sourceSets {main{//noinspection GrDeprecatedAPIUsage
+    output.resourcesDir=output.classesDir}}
 
 jar {duplicatesStrategy = DuplicatesStrategy.EXCLUDE}

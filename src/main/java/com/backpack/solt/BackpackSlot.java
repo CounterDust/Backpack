@@ -18,7 +18,6 @@ public class BackpackSlot extends Slot {
     public boolean isItemValid(ItemStack stack) {
         // 禁止放入背包类物品
         if (stack.getItem() instanceof BackpackItem) {
-            LOGGER.info("Item is a backpack, cannot place in slot {}", this.getSlotIndex());
             return false;
         }
         return super.isItemValid(stack);
