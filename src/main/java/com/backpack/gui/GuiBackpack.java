@@ -111,15 +111,12 @@ public class GuiBackpack extends GuiContainer {
         // 检查是否为快捷栏槽位且背包正在打开
         if (slotIn != null && slotIn.getHasStack() && (type == ClickType.PICKUP)) {
             ItemStack stack = slotIn.getStack();
-            Item item = stack.getItem();
-
             // 检查槽位中的物品是否是当前打开的背包
             if (ItemStack.areItemStacksEqual(stack, this.openBackpackStack)) {
                 LOGGER.info("Preventing pickup of the currently opened backpack.");
                 return; // 阻止拾取
             }
         }
-
         // 调用父类的方法以处理其他情况
         super.handleMouseClick(slotIn, slotId, mouseButton, type);
     }
