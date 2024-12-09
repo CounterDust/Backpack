@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -21,8 +20,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
 
 /**
- *GuiBackpack类扩展了GuiContainer，用于渲染背包的GUI。
- *这个类负责绘制背包界面的背景、前景以及处理用户输入。
+ * GuiBackpack类扩展了GuiContainer，用于渲染背包的GUI。
+ * 这个类负责绘制背包界面的背景、前景以及处理用户输入。
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
@@ -42,8 +41,8 @@ public class GuiBackpack extends GuiContainer {
     /**
      * 构造函数，初始化背包GUI。
      *
-     * @param playerInventory 玩家的库存
-     * @param backpack        背包的库存
+     * @param playerInventory   玩家的库存
+     * @param backpack          背包的库存
      * @param backpackSlotIndex 当前打开的背包所在的槽位索引
      */
     public GuiBackpack(InventoryPlayer playerInventory, InventoryBackpack backpack, int backpackSlotIndex) {
@@ -92,10 +91,23 @@ public class GuiBackpack extends GuiContainer {
         if (keyCode == KeyBindings.OPEN_BACKPACK.getKeyCode()) {
             // 关闭背包 GUI
             this.mc.player.closeScreen();
-        } else {
-            // 如果不是关闭背包的键，则调用父类的 keyTyped 方法
-            super.keyTyped(typedChar, keyCode);
+            return;
         }
+        // 检查是否是丢弃物品的键被按下
+        if (keyCode == mc.gameSettings.keyBindDrop.getKeyCode()) {
+            Slot slot = getSlotUnderMouse();
+            if(slot != null && slot.getHasStack()){
+                ItemStack itemStack = slot.getStack();
+                // 检查槽位中的物品是否是当前打开的背包
+                if (ItemStack.areItemStacksEqual(itemStack, this.openBackpackStack)) {
+                    // 阻止丢弃行为
+                    LOGGER.info("Preventing discard of the currently opened backpack by drop key.");
+                    return;  // 不调用父类方法，阻止丢弃
+                }
+            }
+        }
+        // 如果不是关闭背包的键，则调用父类的 keyTyped 方法
+        super.keyTyped(typedChar, keyCode);
     }
 
     /**
