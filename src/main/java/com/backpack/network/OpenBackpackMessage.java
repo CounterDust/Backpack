@@ -16,7 +16,8 @@ public class OpenBackpackMessage implements IMessage {
     // 日志记录器
     public static final Logger LOGGER = LogManager.getLogger();
 
-    private int slotIndex;  // 背包物品所在的槽位索引
+    // 背包物品所在的槽位索引
+    private int slotIndex;
 
     public OpenBackpackMessage() {}
 

@@ -261,15 +261,6 @@ public class InventoryBackpack implements IInventory {
     }
 
     /**
-     * 获取与背包关联的 ItemStack。
-     *
-     * @return 与背包关联的 ItemStack
-     */
-    public ItemStack getBackpackStack() {
-        return this.backpackStack;
-    }
-
-    /**
      * 构造函数初始化背包。
      *
      * @param backpackStack 背包物品堆

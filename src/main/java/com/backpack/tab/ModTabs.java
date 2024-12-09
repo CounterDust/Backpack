@@ -1,15 +1,20 @@
 package com.backpack.tab;
 
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
 /**
  * 自定义物品栏类，继承自CreativeTabs
  * 用于创建一个带有自定义图标和标签的物品栏
  */
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ModTabs extends CreativeTabs {
 
     // 物品栏标签的翻译键值

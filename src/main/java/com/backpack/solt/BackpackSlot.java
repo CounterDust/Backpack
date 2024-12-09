@@ -1,12 +1,17 @@
 package com.backpack.solt;
 
 import com.backpack.item.BackpackItem;
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class BackpackSlot extends Slot {
     private static final Logger LOGGER = LogManager.getLogger();
 
