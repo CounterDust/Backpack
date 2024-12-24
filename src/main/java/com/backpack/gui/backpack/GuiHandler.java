@@ -1,4 +1,4 @@
-package com.backpack.gui;
+package com.backpack.gui.backpack;
 
 import com.Backpack;
 import com.backpack.container.BackpackContainer;

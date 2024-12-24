@@ -1,4 +1,4 @@
-package com.backpack.gui;
+package com.backpack.gui.backpack;
 
 import com.Backpack;
 import net.minecraftforge.fml.common.network.NetworkRegistry;

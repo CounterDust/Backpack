@@ -11,6 +11,9 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+/**
+ * 玩家打开背包的网络消息
+ */
 public class OpenBackpackMessage implements IMessage {
 
     // 日志记录器
@@ -19,17 +22,30 @@ public class OpenBackpackMessage implements IMessage {
     // 背包物品所在的槽位索引
     private int slotIndex;
 
+    // 默认构造函数，用于网络通信
     public OpenBackpackMessage() {}
 
+    /**
+     * 构造函数，用于创建携带槽位索引的实例
+     * @param slotIndex 背包物品所在的槽位索引
+     */
     public OpenBackpackMessage(int slotIndex) {
         this.slotIndex = slotIndex;
     }
 
+    /**
+     * 从字节缓冲区中读取数据到消息对象
+     * @param buf 字节缓冲区
+     */
     @Override
     public void fromBytes(ByteBuf buf) {
         this.slotIndex = buf.readInt();
     }
 
+    /**
+     * 将消息对象的数据写入字节缓冲区
+     * @param buf 字节缓冲区
+     */
     @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(slotIndex);
@@ -37,6 +53,12 @@ public class OpenBackpackMessage implements IMessage {
 
     // 处理服务器端的消息
     public static class Handler implements IMessageHandler<OpenBackpackMessage, IMessage> {
+        /**
+         * 当消息到来时，服务器端调用此方法进行处理
+         * @param message 收到的消息
+         * @param ctx 消息上下文
+         * @return 回复的消息，此处为null
+         */
         @Override
         public IMessage onMessage(OpenBackpackMessage message, MessageContext ctx) {
             // 在服务器线程中处理消息

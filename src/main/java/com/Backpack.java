@@ -1,6 +1,6 @@
 package com;
 
-import com.backpack.gui.GuiRegistry;
+import com.backpack.gui.backpack.GuiRegistry;
 import com.backpack.keybindings.BackpackClientEvents;
 import com.backpack.keybindings.KeyBindings;
 import com.backpack.network.PacketHandler;

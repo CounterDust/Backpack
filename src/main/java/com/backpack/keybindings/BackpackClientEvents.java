@@ -1,5 +1,6 @@
 package com.backpack.keybindings;
 
+import com.backpack.gui.select.GuiSelect;
 import com.backpack.item.BackpackItem;
 import com.backpack.network.OpenBackpackMessage;
 import com.backpack.network.PacketHandler;
@@ -76,6 +77,10 @@ public class BackpackClientEvents {
             if (pressDuration >= 1000) {
                 // 长按逻辑：输出日志并标记已输出
                 LOGGER.info("长按");
+
+                // 打开 SelectGUI
+                mc.displayGuiScreen(new GuiSelect());
+
                 hasLoggedLongPress = true;
             }
         }
