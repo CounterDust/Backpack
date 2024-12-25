@@ -1,6 +1,6 @@
 package com.backpack.gui.backpack;
 
-import com.backpack.container.BackpackContainer;
+import com.backpack.container.ContainerBackpack;
 import com.backpack.gui.button.Button;
 import com.backpack.inventory.InventoryBackpack;
 import com.backpack.keybindings.KeyBindings;
@@ -51,7 +51,7 @@ public class GuiBackpack extends GuiContainer {
      * @param backpackSlotIndex 当前打开的背包所在的槽位索引
      */
     public GuiBackpack(InventoryPlayer playerInventory, InventoryBackpack backpack, int backpackSlotIndex) {
-        super(new BackpackContainer(playerInventory, backpack));
+        super(new ContainerBackpack(playerInventory, backpack));
         this.xSize = 176; // 宽度
         this.ySize = 186; // 高度
 

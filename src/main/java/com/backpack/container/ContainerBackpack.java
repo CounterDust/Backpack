@@ -16,7 +16,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class BackpackContainer extends Container {
+public class ContainerBackpack extends Container {
 
     // 日志记录器
     public static final Logger LOGGER = LogManager.getLogger();
@@ -31,7 +31,7 @@ public class BackpackContainer extends Container {
      * @param playerInventory 玩家库存
      * @param backpack        背包实例
      */
-    public BackpackContainer(InventoryPlayer playerInventory, InventoryBackpack backpack) {
+    public ContainerBackpack(InventoryPlayer playerInventory, InventoryBackpack backpack) {
         this.backpackInventory = backpack;
 
         // 添加背包槽位，使用自定义的 BackpackSlot 类

@@ -1,7 +1,7 @@
 package com.backpack.gui.backpack;
 
 import com.Backpack;
-import com.backpack.container.BackpackContainer;
+import com.backpack.container.ContainerBackpack;
 import com.backpack.inventory.InventoryBackpack;
 import com.backpack.item.BackpackItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -25,7 +25,7 @@ public class GuiHandler implements IGuiHandler {
             ItemStack backpackItem = player.inventory.getStackInSlot(x);  // x 是槽位索引
 
             if (!backpackItem.isEmpty() && backpackItem.getItem() instanceof BackpackItem) {
-                return new BackpackContainer(player.inventory, new InventoryBackpack(backpackItem));
+                return new ContainerBackpack(player.inventory, new InventoryBackpack(backpackItem));
             } else {
                 LOGGER.warn("server,Player {} does not have a backpack in slot {}.", player.getName(), x);
             }
