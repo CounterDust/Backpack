@@ -2,7 +2,7 @@ package com.backpack.container;
 
 import com.backpack.inventory.InventoryBackpack;
 import com.backpack.item.BackpackItem;
-import com.backpack.solt.BackpackSlot;
+import com.backpack.solt.SlotBackpack;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -37,7 +37,7 @@ public class BackpackContainer extends Container {
         // 添加背包槽位，使用自定义的 BackpackSlot 类
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 9; ++x) {
-                addSlotToContainer(new BackpackSlot(backpack, x + y * 9, 8 + x * 18, 18 + y * 18));
+                addSlotToContainer(new SlotBackpack(backpack, x + y * 9, 8 + x * 18, 18 + y * 18));
             }
         }
 

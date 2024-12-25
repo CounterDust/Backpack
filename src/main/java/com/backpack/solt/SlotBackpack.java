@@ -12,10 +12,10 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class BackpackSlot extends Slot {
+public class SlotBackpack extends Slot {
     private static final Logger LOGGER = LogManager.getLogger();
 
-    public BackpackSlot(IInventory inventoryIn, int index, int xPosition, int yPosition) {
+    public SlotBackpack(IInventory inventoryIn, int index, int xPosition, int yPosition) {
         super(inventoryIn, index, xPosition, yPosition);
     }
 
