@@ -119,88 +119,30 @@ public class GuiBackpack extends GuiContainer {
     /**
      * 处理鼠标点击事件，包括右键点击。
      *
-     * @param slot      被点击的槽位
-     * @param slotId    槽位ID
+     * @param slotIn      被点击的槽位
+     * @param slotId      槽位ID
      * @param mouseButton 鼠标按钮（0: 左键, 1: 右键, 其他: 其他按钮）
-     * @param type      点击类型
+     * @param type        点击类型
      */
     @Override
-    protected void handleMouseClick(Slot slot, int slotId, int mouseButton, ClickType type) {
+    protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
         // 检查是否为快捷栏槽位且背包正在打开
-        if (slot != null && isMemoryEditMode) {
-            NBTTagCompound nbt = this.openBackpackStack.getTagCompound();
-            if (nbt == null) {
-                nbt = new NBTTagCompound();
-                this.openBackpackStack.setTagCompound(nbt);
-            }
-
-            String memorySlotKey = "MemorySlot" + slotId;
-
-            // 右键点击：设置记忆插槽
-            if (mouseButton == 1 && slot.getHasStack()) {
-                ItemStack stack = slot.getStack();
-
-                // 保存物品到 NBT
-                NBTTagCompound memorySlotNbt = new NBTTagCompound();
-                stack.writeToNBT(memorySlotNbt);
-                nbt.setTag(memorySlotKey, memorySlotNbt);
-
-                // 打印日志
-                LOGGER.info("槽位 {} 设置为记忆插槽，记忆物品: {}", slotId, stack.getItem().getRegistryName());
-            }
-            // 左键点击：清空记忆插槽
-            else if (mouseButton == 0) {
-                // 从 NBT 中移除记忆插槽
-                nbt.removeTag(memorySlotKey);
-                LOGGER.info("槽位 {} 的记忆已清空", slotId);
-            }
-
-            // 阻止默认的点击行为
-            return;
-        } else if (slot != null && this.openBackpackStack.hasTagCompound()) {
-            // 检查是否是记忆插槽
-            NBTTagCompound nbt = this.openBackpackStack.getTagCompound();
-            if (nbt.hasKey("MemorySlot" + slotId)) {
-                NBTTagCompound memorySlotNbt = nbt.getCompoundTag("MemorySlot" + slotId);
-                ItemStack memoryItem = new ItemStack(memorySlotNbt);
-
-                // 如果槽位有记忆物品，检查玩家手中的物品是否与记忆物品匹配
-                ItemStack heldItem = mc.player.inventory.getItemStack();
-                if (!heldItem.isEmpty() && !ItemStack.areItemsEqual(heldItem, memoryItem)) {
-                    // 如果物品不匹配，阻止放入
-                    LOGGER.info("槽位 {} 只能放置记忆物品: {}", slotId, memoryItem.getItem().getRegistryName());
-                    return; // 阻止放入
-                }
+        if (slotIn != null && slotIn.getHasStack() && (type == ClickType.PICKUP)) {
+            ItemStack stack = slotIn.getStack();
+            // 检查槽位中的物品是否是当前打开的背包
+            if (ItemStack.areItemStacksEqual(stack, this.openBackpackStack)) {
+                LOGGER.info("Preventing pickup of the currently opened backpack.");
+                return; // 阻止拾取
             }
         }
-
         // 调用父类的方法以处理其他情况
-        super.handleMouseClick(slot, slotId, mouseButton, type);
+        super.handleMouseClick(slotIn, slotId, mouseButton, type);
     }
 
     @Override
     public void initGui() {
         super.initGui();
-
-        // 读取 NBT 中的记忆插槽信息
-        NBTTagCompound nbt = this.openBackpackStack.getTagCompound();
-        if (nbt != null) {
-            for (int i = 0; i < this.inventorySlots.inventorySlots.size(); i++) {
-                Slot slot = this.inventorySlots.inventorySlots.get(i);
-                String memorySlotKey = "MemorySlot" + i;
-                if (nbt.hasKey(memorySlotKey)) {
-                    // 读取记忆插槽的物品
-                    NBTTagCompound memorySlotNbt = nbt.getCompoundTag(memorySlotKey);
-                    ItemStack memoryItem = new ItemStack(memorySlotNbt);
-
-                    // 打印日志
-                    LOGGER.info("恢复槽位 {} 的记忆物品: {}", i, memoryItem.getItem().getRegistryName());
-                }
-            }
-        }
-
-        // 添加按钮
-        this.buttonList.add(new Button(0, this.guiLeft + 26, this.guiTop + 5, "开启槽位记忆编辑"));
+        this.buttonList.add(new Button(0, this.guiLeft + 26, this.guiTop + 5, ""));
     }
 
     /**
