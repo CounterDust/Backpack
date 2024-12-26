@@ -5,11 +5,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.NonNullList;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
-import net.minecraftforge.common.util.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,46 +25,32 @@ public class InventoryBackpack implements IInventory {
     // 日志记录器
     public static final Logger LOGGER = LogManager.getLogger();
 
+
     private final String name = "Backpack";
+
+
     private final boolean customName;
+
+
     private final NonNullList<ItemStack> inventoryContents = NonNullList.withSize(36, ItemStack.EMPTY);
+
+
     private final ItemStack backpackStack;
 
     /**
-     * 从 NBT 数据中读取库存信息。
+     * 构造函数初始化背包。
+     *
+     * @param backpackStack 背包物品堆
      */
-    private void readFromNBT(NBTTagCompound compound) {
-        // 读取背包内容
-        NBTTagList itemList = compound.getTagList("Items", Constants.NBT.TAG_COMPOUND);
-        for (int i = 0; i < itemList.tagCount(); i++) {
-            NBTTagCompound itemTag = itemList.getCompoundTagAt(i);
-            byte slot = itemTag.getByte("Slot");
-            if (slot >= 0 && slot < this.getSizeInventory()) {
-                this.inventoryContents.set(slot, new ItemStack(itemTag));
-            } else {
-                LOGGER.warn("Invalid slot index: {}", slot);
-            }
-        }
-        // 如果有其他需要读取的状态或属性，可以在这里继续添加
-    }
+    public InventoryBackpack(ItemStack backpackStack) {
+        this.backpackStack = backpackStack;
+        this.customName = false;
 
-    /**
-     * 将库存信息写入 NBT 数据。
-     */
-    public void writeToNBT(NBTTagCompound compound) {
-        // 保存背包内容
-        NBTTagList itemList = new NBTTagList();
-        for (int i = 0; i < this.getSizeInventory(); i++) {
-            ItemStack stack = this.inventoryContents.get(i);
-            if (!stack.isEmpty()) {
-                NBTTagCompound itemTag = new NBTTagCompound();
-                itemTag.setByte("Slot", (byte) i);
-                stack.writeToNBT(itemTag);
-                itemList.appendTag(itemTag);
-            }
+        // 从 NBT 数据中读取库存信息
+        if (backpackStack.hasTagCompound()) {
+            NBTTagCompound nbt = backpackStack.getTagCompound();
+            InventoryManager.readFromNBT(this,nbt);
         }
-        compound.setTag("Items", itemList);
-        // 如果有其他需要保存的状态或属性，可以在这里继续添加
     }
 
     /**
@@ -143,7 +127,7 @@ public class InventoryBackpack implements IInventory {
      * @return 剩余的物品堆
      */
     @Override
-    public @Nonnull ItemStack decrStackSize(int index, int count) {
+    public ItemStack decrStackSize(int index, int count) {
         ItemStack stack = this.getStackInSlot(index);
         if (!stack.isEmpty()) {
             if (stack.getCount() <= count) {
@@ -163,7 +147,7 @@ public class InventoryBackpack implements IInventory {
      * @return 被清空的物品堆
      */
     @Override
-    public @Nonnull ItemStack removeStackFromSlot(int index) {
+    public ItemStack removeStackFromSlot(int index) {
         ItemStack stack = this.getStackInSlot(index);
         if (!stack.isEmpty()) {
             this.setInventorySlotContents(index, ItemStack.EMPTY);
@@ -172,13 +156,15 @@ public class InventoryBackpack implements IInventory {
         return stack;
     }
 
+    /**
+     * 清空指定槽位的物品。
+     *
+     * @param index 槽位索引
+     */
     @Override
-    public void setInventorySlotContents(int index, @Nonnull ItemStack stack) {
+    public void setInventorySlotContents(int index,  ItemStack stack) {
         // 设置槽位中的物品
         this.inventoryContents.set(index, stack);
-
-        // 标记库存为脏，以便同步到客户端
-        this.markDirty();
     }
 
     /**
@@ -196,14 +182,15 @@ public class InventoryBackpack implements IInventory {
      */
     @Override
     public void markDirty() {
-        // 将背包状态写入 NBT
         if (this.backpackStack != null) {
             NBTTagCompound nbt = this.backpackStack.getTagCompound();
             if (nbt == null) {
                 nbt = new NBTTagCompound();
                 this.backpackStack.setTagCompound(nbt);
+                LOGGER.info("创建了新的 NBT 标签用于背包。");
             }
-            this.writeToNBT(nbt);
+            // 将背包状态写入 NBT
+            InventoryManager.writeToNBT(this, nbt);
         }
     }
 
@@ -234,7 +221,7 @@ public class InventoryBackpack implements IInventory {
      */
     @Override
     public void closeInventory(EntityPlayer player) {
-        this.onPackClosed();
+        this.markDirty();
     }
 
     /**
@@ -258,29 +245,6 @@ public class InventoryBackpack implements IInventory {
     @Override
     public int getField(int id) {
         return 0;
-    }
-
-    /**
-     * 构造函数初始化背包。
-     *
-     * @param backpackStack 背包物品堆
-     */
-    public InventoryBackpack(ItemStack backpackStack) {
-        this.backpackStack = backpackStack;
-        this.customName = false;
-
-        // 从 NBT 数据中读取库存信息
-        if (backpackStack.hasTagCompound()) {
-            NBTTagCompound nbt = backpackStack.getTagCompound();
-            this.readFromNBT(nbt);
-        }
-    }
-
-    /**
-     * 当背包关闭时调用此方法，确保库存数据被保存到 NBT。
-     */
-    public void onPackClosed() {
-        this.writeToNBT(this.backpackStack.getTagCompound());
     }
 
     /**
