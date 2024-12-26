@@ -126,7 +126,7 @@ public class GuiBackpack extends GuiContainer {
     @Override
     protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
         // 检查是否为快捷栏槽位且背包正在打开
-        if (slotIn != null && slotIn.getHasStack() && (type == ClickType.PICKUP)) {
+        if (slotIn.getHasStack() && (type == ClickType.PICKUP)) {
             ItemStack stack = slotIn.getStack();
             // 检查槽位中的物品是否是当前打开的背包
             if (ItemStack.areItemStacksEqual(stack, this.openBackpackStack)) {
