@@ -1,6 +1,6 @@
 package com;
 
-import com.backpack.gui.backpack.GuiRegistry;
+import com.backpack.gui.backpack.GuiHandler;
 import com.backpack.keybindings.BackpackClientEvents;
 import com.backpack.keybindings.KeyBindings;
 import com.backpack.network.PacketHandler;
@@ -40,7 +40,7 @@ public class Backpack {
     public void init(FMLInitializationEvent event) {
 
         // 注册GUI处理类
-        GuiRegistry.registerGuiHandlers(this);
+        GuiHandler.register(this);
 
         // 初始化键绑定
         KeyBindings.init();

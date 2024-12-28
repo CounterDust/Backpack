@@ -17,6 +17,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
 public class SlotBackpack extends Slot {
+
     // 日志对象，用于记录信息
     private static final Logger LOGGER = LogManager.getLogger();
 

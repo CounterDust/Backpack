@@ -1,6 +1,8 @@
 package com.backpack.item;
 
 import com.Backpack;
+import com.backpack.network.OpenBackpackMessage;
+import com.backpack.network.PacketHandler;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -42,9 +44,10 @@ public class BackpackItem extends ModItem {
             int slotIndex = findSlotIndex(playerIn, handIn);
             try {
                 // 打开背包GUI
-                playerIn.openGui(Backpack.INSTANCE, Backpack.GUI_ID_BACKPACK, worldIn, slotIndex, 0, 0);
+                PacketHandler.sendToServer(new OpenBackpackMessage(slotIndex));
+                return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
             } catch (Exception e) {
-                BackpackItem.LOGGER.error("Failed to open backpack GUI for player {}: {}", playerIn.getName(), e.getMessage());
+                BackpackItem.LOGGER.error("无法打开玩家 {}： {} 的背包 GUI", playerIn.getName(), e.getMessage());
                 return new ActionResult<>(EnumActionResult.FAIL, itemStack);
             }
         }
