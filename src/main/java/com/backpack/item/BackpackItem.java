@@ -1,6 +1,5 @@
 package com.backpack.item;
 
-import com.Backpack;
 import com.backpack.network.OpenBackpackMessage;
 import com.backpack.network.PacketHandler;
 import mcp.MethodsReturnNonnullByDefault;
