@@ -1,5 +1,6 @@
 package com.backpack.inventory;
 
+import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -8,7 +9,10 @@ import net.minecraftforge.common.util.Constants;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class InventoryBackpackFunction extends InventoryBackpack{
     // 日志记录器
     public static final Logger LOGGER = LogManager.getLogger();

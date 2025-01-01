@@ -1,8 +1,0 @@
-{
-  "required": true,
-  "package": "com.backpack.mixin",
-  "compatibilityLevel": "JAVA_8",
-  "mixins": [
-    "SlotMixin"
-  ]
-}

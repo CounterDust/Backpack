@@ -5,7 +5,6 @@ import com.backpack.slot.SlotBackpack;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -28,8 +27,8 @@ public class ContainerBackpack extends Container {
      * 构造函数
      * 初始化背包容器，包括背包槽位和玩家库存槽位
      *
-     * @param playerInventory 玩家库存
-     * @param backpackInventory    背包实例
+     * @param playerInventory   玩家库存
+     * @param backpackInventory 背包实例
      */
     public ContainerBackpack(InventoryPlayer playerInventory, InventoryBackpackFunction backpackInventory) {
         this.backpackInventory = backpackInventory;
@@ -123,10 +122,5 @@ public class ContainerBackpack extends Container {
 
         // 返回转移前的物品堆副本，表示成功转移的物品
         return copyStack;
-    }
-
-    @Override
-    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
-        return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
 }
