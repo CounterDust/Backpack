@@ -1,7 +1,7 @@
 package com.backpack.register;
 
-import com.backpack.item.BackpackItem;
-import com.backpack.item.ModItem;
+import com.backpack.item.ItemModBackpack;
+import com.backpack.item.ItemMod;
 import com.backpack.tab.ModTabs;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.init.Items;
@@ -37,7 +37,7 @@ public class RegisterItem {
 
     // 物品实例
     // 背包类
-    public static final ModItem backpack = new BackpackItem("backpack");
+    public static final ItemMod backpack = new ItemModBackpack("backpack");
     // 普通类
     //public static final ModItem backpack1 = new ModItem("backpack1");
 

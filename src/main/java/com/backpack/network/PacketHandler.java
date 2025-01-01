@@ -6,17 +6,21 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 
 public class PacketHandler {
-    private static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel("backpack");
+    // 创建一个名为 "backpack" 的网络通道
+    private static final SimpleNetworkWrapper INSTANCE = NetworkRegistry.INSTANCE.newSimpleChannel("Backpack");
 
+    // 初始化方法，用于注册消息
     public static void init() {
-        // 注册消息
+        // 注册 OpenBackpackMessage 消息，从客户端发送到服务器
         INSTANCE.registerMessage(OpenBackpackMessage.Handler.class, OpenBackpackMessage.class, 0, Side.SERVER);
     }
 
+    // 获取 SimpleNetworkWrapper 实例
     public static SimpleNetworkWrapper getInstance() {
         return INSTANCE;
     }
 
+    // 从客户端向服务器发送消息
     public static void sendToServer(IMessage message) {
         INSTANCE.sendToServer(message);
     }

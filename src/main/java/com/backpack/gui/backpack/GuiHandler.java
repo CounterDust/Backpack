@@ -2,8 +2,9 @@ package com.backpack.gui.backpack;
 
 import com.Backpack;
 import com.backpack.container.ContainerBackpack;
-import com.backpack.inventory.InventoryBackpack;
-import com.backpack.item.BackpackItem;
+import com.backpack.inventory.ClientInventoryBackpack;
+import com.backpack.inventory.InventoryBackpackFunction;
+import com.backpack.item.ItemModBackpack;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -28,10 +29,10 @@ public class GuiHandler implements IGuiHandler {
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         if (ID == Backpack.GUI_ID_BACKPACK) {
             ItemStack backpackItem = player.inventory.getStackInSlot(x);
-            if (!backpackItem.isEmpty() && backpackItem.getItem() instanceof BackpackItem) {
-                return new ContainerBackpack(player.inventory, new InventoryBackpack(backpackItem));
+            if (!backpackItem.isEmpty() && backpackItem.getItem() instanceof ItemModBackpack) {
+                return new ContainerBackpack(player.inventory, new InventoryBackpackFunction(backpackItem));
             } else {
-                LOGGER.warn("server,Player {} does not have a backpack in slot {}.", player.getName(), x);
+                LOGGER.warn("服务器，玩家 {} 在槽位 {} 中没有背包。", player.getName(), x);
             }
         }
         return null;
@@ -42,10 +43,10 @@ public class GuiHandler implements IGuiHandler {
     public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         if (ID == Backpack.GUI_ID_BACKPACK) {
             ItemStack backpackItem = player.inventory.getStackInSlot(x);
-            if (!backpackItem.isEmpty() && backpackItem.getItem() instanceof BackpackItem) {
-                return new GuiBackpack(player.inventory, new InventoryBackpack(backpackItem), x);
+            if (!backpackItem.isEmpty() && backpackItem.getItem() instanceof ItemModBackpack) {
+                return new GuiBackpack(player.inventory, new ClientInventoryBackpack(backpackItem), x);
             } else {
-                LOGGER.warn("client,Player {} does not have a backpack in slot {}.", player.getName(), x);
+                LOGGER.warn("客户端，玩家 {} 在槽位 {} 中没有背包。", player.getName(), x);
             }
         }
         return null;

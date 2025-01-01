@@ -11,14 +11,14 @@ import javax.annotation.ParametersAreNonnullByDefault;
  */
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class ModItem extends Item {
+public class ItemMod extends Item {
 
     /**
      * 构造函数，初始化自定义物品。
      *
      * @param name 物品的注册名和非本地化名
      */
-    public ModItem(String name) {
+    public ItemMod(String name) {
         // 调用父类构造函数
         super();
 

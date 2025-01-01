@@ -1,6 +1,6 @@
 package com.backpack.slot;
 
-import com.backpack.item.BackpackItem;
+import com.backpack.item.ItemModBackpack;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
@@ -44,7 +44,7 @@ public class SlotBackpack extends Slot {
     @Override
     public boolean isItemValid(ItemStack stack) {
         // 禁止放入背包类物品
-        if (stack.getItem() instanceof BackpackItem) {
+        if (stack.getItem() instanceof ItemModBackpack) {
             return false;
         }
         return super.isItemValid(stack);

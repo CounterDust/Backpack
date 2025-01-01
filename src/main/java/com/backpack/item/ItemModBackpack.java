@@ -9,6 +9,8 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,12 +18,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class BackpackItem extends ModItem {
+public class ItemModBackpack extends ItemMod {
 
     // 日志记录器
     public static final Logger LOGGER = LogManager.getLogger();
 
-    public BackpackItem(String name) {
+    public ItemModBackpack(String name) {
         super(name);
         // 背包物品的最大堆叠数为1
         this.setMaxStackSize(1);
@@ -36,22 +38,24 @@ public class BackpackItem extends ModItem {
      * @return 使用物品后的结果
      */
     @Override
+    @SideOnly(Side.CLIENT)
     public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) {
         ItemStack itemStack = playerIn.getHeldItem(handIn);
 
-        if (!worldIn.isRemote && !itemStack.isEmpty() && itemStack.getItem() instanceof BackpackItem) {
+        // 客户端只负责发送请求，不直接执行打开背包的操作
+        if (worldIn.isRemote && !itemStack.isEmpty() && itemStack.getItem() instanceof ItemModBackpack) {
             int slotIndex = findSlotIndex(playerIn, handIn);
             try {
-                // 打开背包GUI
+                // 发送请求给服务器，要求打开背包
                 PacketHandler.sendToServer(new OpenBackpackMessage(slotIndex));
                 return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
             } catch (Exception e) {
-                BackpackItem.LOGGER.error("无法打开玩家 {}： {} 的背包 GUI", playerIn.getName(), e.getMessage());
+                LOGGER.error("无法打开玩家 {} 的背包 GUI: {}", playerIn.getName(), e.getMessage());
                 return new ActionResult<>(EnumActionResult.FAIL, itemStack);
             }
         }
 
-        return new ActionResult<>(EnumActionResult.SUCCESS, itemStack);
+        return new ActionResult<>(EnumActionResult.PASS, itemStack);
     }
 
     /**

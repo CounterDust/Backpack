@@ -2,7 +2,7 @@ package com.backpack.gui.backpack;
 
 import com.backpack.container.ContainerBackpack;
 import com.backpack.gui.button.Button;
-import com.backpack.inventory.InventoryBackpack;
+import com.backpack.inventory.InventoryBackpackFunction;
 import com.backpack.keybindings.KeyBindings;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.GuiButton;
@@ -38,10 +38,10 @@ public class GuiBackpack extends GuiContainer {
     // 记录槽位记忆编辑模式是否开启
     private boolean isMemoryEditMode = false;
 
-    /**
-     * 当前打开的背包 ItemStack
-     */
+    // 当前打开的背包 ItemStack
     private final ItemStack openBackpackStack;
+
+    private final InventoryBackpackFunction inventoryBackpackFunction;
 
     /**
      * 构造函数，初始化背包GUI。
@@ -50,8 +50,9 @@ public class GuiBackpack extends GuiContainer {
      * @param backpack          背包的库存
      * @param backpackSlotIndex 当前打开的背包所在的槽位索引
      */
-    public GuiBackpack(InventoryPlayer playerInventory, InventoryBackpack backpack, int backpackSlotIndex) {
+    public GuiBackpack(InventoryPlayer playerInventory, InventoryBackpackFunction backpack, int backpackSlotIndex) {
         super(new ContainerBackpack(playerInventory, backpack));
+        this.inventoryBackpackFunction = backpack;
         this.xSize = 176; // 宽度
         this.ySize = 186; // 高度
 
@@ -125,13 +126,17 @@ public class GuiBackpack extends GuiContainer {
      */
     @Override
     protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
-        // 检查是否为快捷栏槽位且背包正在打开
-        if (slotIn != null && slotIn.getHasStack() && (type == ClickType.PICKUP)) {
-            ItemStack stack = slotIn.getStack();
-            // 检查槽位中的物品是否是当前打开的背包
-            if (ItemStack.areItemStacksEqual(stack, this.openBackpackStack)) {
-                LOGGER.info("Preventing pickup of the currently opened backpack.");
-                return; // 阻止拾取
+        if (isMemoryEditMode) {
+
+        } else {
+            // 检查是否为快捷栏槽位且背包正在打开
+            if (slotIn != null && slotIn.getHasStack() && (type == ClickType.PICKUP)) {
+                ItemStack stack = slotIn.getStack();
+                // 检查槽位中的物品是否是当前打开的背包
+                if (ItemStack.areItemStacksEqual(stack, openBackpackStack)) {
+                    LOGGER.info("阻止捡起当前打开的背包。");
+                    return; // 阻止拾取
+                }
             }
         }
         // 调用父类的方法以处理其他情况
@@ -154,10 +159,6 @@ public class GuiBackpack extends GuiContainer {
         if (button.id == 0) {
             // 切换槽位记忆编辑模式
             isMemoryEditMode = !isMemoryEditMode;
-
-            // 更新按钮文本
-            button.displayString = isMemoryEditMode ? "关闭槽位记忆编辑" : "开启槽位记忆编辑";
-
             // 打印日志
             LOGGER.info("槽位记忆编辑模式: {}", isMemoryEditMode);
         }

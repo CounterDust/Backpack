@@ -1,10 +1,11 @@
 package com.backpack.container;
 
-import com.backpack.inventory.InventoryBackpack;
+import com.backpack.inventory.InventoryBackpackFunction;
 import com.backpack.slot.SlotBackpack;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.ClickType;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -21,22 +22,22 @@ public class ContainerBackpack extends Container {
     private static final Logger LOGGER = LogManager.getLogger();
 
     // 背包库存实例
-    private final InventoryBackpack backpackInventory;
+    private final InventoryBackpackFunction backpackInventory;
 
     /**
      * 构造函数
      * 初始化背包容器，包括背包槽位和玩家库存槽位
      *
      * @param playerInventory 玩家库存
-     * @param backpack        背包实例
+     * @param backpackInventory    背包实例
      */
-    public ContainerBackpack(InventoryPlayer playerInventory, InventoryBackpack backpack) {
-        this.backpackInventory = backpack;
+    public ContainerBackpack(InventoryPlayer playerInventory, InventoryBackpackFunction backpackInventory) {
+        this.backpackInventory = backpackInventory;
 
         // 添加背包槽位
         for (int y = 0; y < 4; ++y) {
             for (int x = 0; x < 9; ++x) {
-                addSlotToContainer(new SlotBackpack(backpack, x + y * 9, 8 + x * 18, 18 + y * 18));
+                addSlotToContainer(new SlotBackpack(backpackInventory, x + y * 9, 8 + x * 18, 18 + y * 18));
             }
         }
 
@@ -59,7 +60,6 @@ public class ContainerBackpack extends Container {
      * @param playerIn 玩家实体
      * @return 如果背包可以被玩家使用，则返回true
      */
-    @Override
     public boolean canInteractWith(EntityPlayer playerIn) {
         return this.backpackInventory.isUsableByPlayer(playerIn);
     }
@@ -98,8 +98,7 @@ public class ContainerBackpack extends Container {
         // - useBlacklist: 是否使用黑名单（false 表示不使用）
         // 如果是背包中的物品（index < backpackSize），则尝试将其移到玩家库存（从 backpackSize 开始到 totalSlots 结束）
         // 如果是玩家库存中的物品（index >= backpackSize），则尝试将其移到背包（从 0 开始到 backpackSize 结束）
-        if (!mergeItemStack(originalStack,
-                index < backpackSize ? backpackSize : 0,  // 起始槽位索引
+        if (!mergeItemStack(originalStack, index < backpackSize ? backpackSize : 0,  // 起始槽位索引
                 index < backpackSize ? totalSlots : backpackSize,  // 结束槽位索引
                 false)) {  // 不使用黑名单
             return ItemStack.EMPTY;  // 如果无法合并物品堆，则返回空物品堆
@@ -124,5 +123,10 @@ public class ContainerBackpack extends Container {
 
         // 返回转移前的物品堆副本，表示成功转移的物品
         return copyStack;
+    }
+
+    @Override
+    public ItemStack slotClick(int slotId, int dragType, ClickType clickTypeIn, EntityPlayer player) {
+        return super.slotClick(slotId, dragType, clickTypeIn, player);
     }
 }

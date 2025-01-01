@@ -1,7 +1,7 @@
 package com.backpack.keybindings;
 
 import com.backpack.gui.select.GuiSelect;
-import com.backpack.item.BackpackItem;
+import com.backpack.item.ItemModBackpack;
 import com.backpack.network.OpenBackpackMessage;
 import com.backpack.network.PacketHandler;
 import net.minecraft.client.Minecraft;
@@ -95,7 +95,7 @@ public class BackpackClientEvents {
     private static int findFirstBackpack(EntityPlayer player) {
         for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
             ItemStack itemStack = player.inventory.getStackInSlot(i);
-            if (!itemStack.isEmpty() && itemStack.getItem() instanceof BackpackItem) {
+            if (!itemStack.isEmpty() && itemStack.getItem() instanceof ItemModBackpack) {
                 return i; // 返回找到的第一个背包的槽位索引
             }
         }
