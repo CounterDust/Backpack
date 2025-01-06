@@ -8,21 +8,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * 玩家打开背包的网络消息
  */
 public class OpenBackpackMessage implements IMessage {
 
-    // 日志记录器
-    public static final Logger LOGGER = LogManager.getLogger();
-
     // 背包物品所在的槽位索引
     private int slotIndex;
 
-    // 默认构造函数，用于网络通信
     public OpenBackpackMessage() {
     }
 
@@ -76,9 +70,6 @@ public class OpenBackpackMessage implements IMessage {
                 if (!backpackItem.isEmpty() && backpackItem.getItem() instanceof ItemModBackpack) {
                     // 打开背包GUI
                     player.openGui(Backpack.INSTANCE, Backpack.GUI_ID_BACKPACK, player.getEntityWorld(), message.slotIndex, 0, 0);
-                } else {
-                    // 如果没有找到背包物品，记录错误日志
-                    OpenBackpackMessage.LOGGER.warn("玩家 {} 在槽位 {} 中没有背包。", player.getName(), message.slotIndex);
                 }
             });
             return null;

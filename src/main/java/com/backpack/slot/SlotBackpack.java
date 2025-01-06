@@ -1,12 +1,11 @@
 package com.backpack.slot;
 
+import com.backpack.inventory.InventoryBackpackFunction;
 import com.backpack.item.ItemModBackpack;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -18,20 +17,22 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class SlotBackpack extends Slot {
 
-    // 日志对象，用于记录信息
-    private static final Logger LOGGER = LogManager.getLogger();
+    private final InventoryBackpackFunction backpackInventory;
+    private final int slotId;
 
     /**
      * 构造函数
      * 初始化背包槽位
      *
-     * @param inventoryIn 背包的库存对象
+     * @param backpackInventory 背包的库存对象
      * @param index       槽位索引
      * @param xPosition   槽位的X坐标
      * @param yPosition   槽位的Y坐标
      */
-    public SlotBackpack(IInventory inventoryIn, int index, int xPosition, int yPosition) {
-        super(inventoryIn, index, xPosition, yPosition);
+    public SlotBackpack(InventoryBackpackFunction backpackInventory, int index, int xPosition, int yPosition) {
+        super(backpackInventory, index, xPosition, yPosition);
+        this.backpackInventory = backpackInventory;
+        this.slotId = index;
     }
 
     /**
@@ -43,11 +44,21 @@ public class SlotBackpack extends Slot {
      */
     @Override
     public boolean isItemValid(ItemStack stack) {
-        // 禁止放入背包类物品
+        // 如果尝试放入的是背包本身，则不允许放入
         if (stack.getItem() instanceof ItemModBackpack) {
             return false;
         }
-        return super.isItemValid(stack);
+
+        // 获取当前槽位的记忆物品
+        ItemStack memoryItem = this.backpackInventory.getMemoryItem(slotId);
+
+        // 如果记忆物品为空，则允许放入任何物品
+        if (memoryItem.isEmpty()) {
+            return true;
+        }
+
+        // 比较放入的物品与记忆物品是否相同
+        return ItemStack.areItemStacksEqual(stack, memoryItem);
     }
 
     /**
@@ -66,4 +77,6 @@ public class SlotBackpack extends Slot {
             super.putStack(ItemStack.EMPTY);
         }
     }
+
+
 }

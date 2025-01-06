@@ -26,12 +26,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class InventoryBackpack implements IInventory, INBTSerializable<NBTTagCompound> {
 
     // 日志记录器
-    public static final Logger LOGGER = LogManager.getLogger();
+    private static final Logger LOGGER = LogManager.getLogger();
 
     private final String name = "Backpack";
     private final boolean customName = false;
-    private final NonNullList<ItemStack> inventoryContents = NonNullList.withSize(36, ItemStack.EMPTY);
-    public final ItemStack openBackpackStack;
+    private final NonNullList<ItemStack> inventoryContents;
+    private final ItemStack openBackpackStack;
 
     // 定义 NBT 标签名称，用于存储背包中的物品列表
     private static final String ITEMS_TAG = "Items";
@@ -43,6 +43,7 @@ public class InventoryBackpack implements IInventory, INBTSerializable<NBTTagCom
      */
     public InventoryBackpack(ItemStack openBackpackStack) {
         this.openBackpackStack = openBackpackStack;
+        this.inventoryContents = NonNullList.withSize(36, ItemStack.EMPTY);
     }
 
     /**
@@ -82,7 +83,7 @@ public class InventoryBackpack implements IInventory, INBTSerializable<NBTTagCom
      */
     @Override
     public int getSizeInventory() {
-        return inventoryContents.size();
+        return this.inventoryContents.size();
     }
 
     /**
@@ -92,7 +93,7 @@ public class InventoryBackpack implements IInventory, INBTSerializable<NBTTagCom
      */
     @Override
     public boolean isEmpty() {
-        for (ItemStack stack : inventoryContents) {
+        for (ItemStack stack : this.inventoryContents) {
             if (!stack.isEmpty()) {
                 return false;
             }
@@ -108,7 +109,7 @@ public class InventoryBackpack implements IInventory, INBTSerializable<NBTTagCom
      */
     @Override
     public @Nonnull ItemStack getStackInSlot(int index) {
-        return inventoryContents.get(index);
+        return this.inventoryContents.get(index);
     }
 
     /**
@@ -127,7 +128,7 @@ public class InventoryBackpack implements IInventory, INBTSerializable<NBTTagCom
             } else {
                 stack = stack.splitStack(count);
             }
-            markDirty();
+            this.markDirty();
         }
         return stack;
     }
@@ -143,7 +144,7 @@ public class InventoryBackpack implements IInventory, INBTSerializable<NBTTagCom
         ItemStack stack = getStackInSlot(index);
         if (!stack.isEmpty()) {
             setInventorySlotContents(index, ItemStack.EMPTY);
-            markDirty();
+            this.markDirty();
         }
         return stack;
     }
@@ -156,7 +157,7 @@ public class InventoryBackpack implements IInventory, INBTSerializable<NBTTagCom
      */
     @Override
     public void setInventorySlotContents(int index, @Nonnull ItemStack stack) {
-        inventoryContents.set(index, stack);
+        this.inventoryContents.set(index, stack);
     }
 
     /**
@@ -211,7 +212,7 @@ public class InventoryBackpack implements IInventory, INBTSerializable<NBTTagCom
      */
     @Override
     public void closeInventory(EntityPlayer player) {
-        markDirty();
+        this.markDirty();
     }
 
     /**
@@ -265,7 +266,7 @@ public class InventoryBackpack implements IInventory, INBTSerializable<NBTTagCom
         for (int i = 0; i < getSizeInventory(); ++i) {
             setInventorySlotContents(i, ItemStack.EMPTY);
         }
-        this.markDirty();  // 确保清空后保存数据
+        this.markDirty();
     }
 
     /**
@@ -279,14 +280,22 @@ public class InventoryBackpack implements IInventory, INBTSerializable<NBTTagCom
             LOGGER.debug("NBT 复合标签为空，无法读取背包数据");
             return;
         }
+        // 检查 NBT 中是否存在物品的标签 (ITEMS_TAG)
         if (compound.hasKey(ITEMS_TAG, Constants.NBT.TAG_LIST)) {
+            // 从 NBT 中获取记忆物品的 NBTTagList
             NBTTagList itemList = compound.getTagList(ITEMS_TAG, Constants.NBT.TAG_COMPOUND);
+            // 遍历 NBTTagList 中的每一个记忆物品
             for (int i = 0; i < itemList.tagCount(); i++) {
+                // 获取当前物品的 NBTTagCompound
                 NBTTagCompound itemTag = itemList.getCompoundTagAt(i);
+                // 从 NBTTagCompound 中读取槽位索引 (Slot)
                 byte slotIndex = itemTag.getByte("Slot");
+                // 确保槽位索引在有效范围内
                 if (slotIndex >= 0 && slotIndex < getSizeInventory()) {
+                    // 使用 NBTTagCompound 创建 ItemStack 对象
                     ItemStack stack = new ItemStack(itemTag);
-                    setInventorySlotContents(slotIndex, stack);
+                    // 将 ItemStack 设置到对应的物品列表中
+                    this.setInventorySlotContents(slotIndex, stack);
                 }
             }
         }
@@ -300,26 +309,27 @@ public class InventoryBackpack implements IInventory, INBTSerializable<NBTTagCom
     @Override
     public NBTTagCompound serializeNBT() {
         NBTTagCompound compound = new NBTTagCompound();
-
-        // 创建一个新的 NBTTagList 用于存储物品栈信息。
+        // 创建一个新的 NBTTagList 用于存储记忆物品信息
         NBTTagList itemList = new NBTTagList();
-        // 遍历背包中的所有槽位，获取每个槽位的物品栈。
+        // 遍历记忆物品列表中的每一个槽位
         for (int i = 0; i < getSizeInventory(); i++) {
+            // 获取当前槽位的记忆物品
             ItemStack stack = getStackInSlot(i);
-            // 如果当前槽位的物品栈不为空，则将其信息写入 NBTTagList。
+            // 检查当前槽位是否包含有效的物品栈（非空）
             if (!stack.isEmpty()) {
-                // 创建一个新的 NBTTagCompound 用于存储单个物品栈的信息。
+                // 创建一个新的 NBTTagCompound 用于存储单个记忆物品的信息
                 NBTTagCompound itemTag = new NBTTagCompound();
-                // 将槽位索引写入 NBTTagCompound，使用 "Slot" 作为键名。
+                // 将槽位索引写入 NBTTagCompound，使用 "Slot" 作为键名
                 itemTag.setByte("Slot", (byte) i);
-                // 调用 ItemStack 的 serializeNBT 方法，将物品栈的所有数据写入 NBTTagCompound 中。
+                // 调用 ItemStack 的 writeToNBT 方法，将物品栈的所有数据写入 NBTTagCompound 中
                 stack.writeToNBT(itemTag);
-                // 将该物品栈的 NBTTagCompound 添加到 itemList 中。
+                // 将该物品栈的 NBTTagCompound 添加到 memoryItemList 中
                 itemList.appendTag(itemTag);
             }
         }
+        // 将 itemList 设置为 NBTTagCompound 的一个标签，使用 ITEMS_TAG 作为键名
         compound.setTag(ITEMS_TAG, itemList);
-
+        // 返回包含所有数据的 NBTTagCompound
         return compound;
     }
 }

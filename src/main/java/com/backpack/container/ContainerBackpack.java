@@ -31,6 +31,7 @@ public class ContainerBackpack extends Container {
      * @param backpackInventory 背包实例
      */
     public ContainerBackpack(InventoryPlayer playerInventory, InventoryBackpackFunction backpackInventory) {
+
         this.backpackInventory = backpackInventory;
 
         // 添加背包槽位
@@ -122,5 +123,19 @@ public class ContainerBackpack extends Container {
 
         // 返回转移前的物品堆副本，表示成功转移的物品
         return copyStack;
+    }
+
+    public void handleSlotInteraction(int slotId, int mouseButton) {
+        if (slotId >= 0 && slotId < this.backpackInventory.getSizeInventory()) {
+            if (mouseButton == 0) {
+                Slot slot = this.inventorySlots.get(slotId);
+                ItemStack stack = slot.getStack();
+                if (!stack.isEmpty()) {
+                    this.backpackInventory.setMemoryItem(slotId, stack);
+                }
+            } else if (mouseButton == 1) {
+                this.backpackInventory.clearMemoryItem(slotId);
+            }
+        }
     }
 }
