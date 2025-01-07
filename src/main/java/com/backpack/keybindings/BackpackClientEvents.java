@@ -58,7 +58,7 @@ public class BackpackClientEvents {
                         PacketHandler.sendToServer(new OpenBackpackMessage(backpackSlotIndex));
                     } else {
                         // 如果没有找到背包物品，记录日志
-                        LOGGER.info("Player {} does not have a backpack in their inventory.", player.getName());
+                        LOGGER.info("玩家 {} 的库存中没有背包。", player.getName());
                     }
                 }
 

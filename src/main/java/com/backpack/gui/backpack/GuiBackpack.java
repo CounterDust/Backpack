@@ -7,7 +7,6 @@ import com.backpack.keybindings.KeyBindings;
 import com.backpack.network.MemoryMessage;
 import com.backpack.network.PacketHandler;
 import mcp.MethodsReturnNonnullByDefault;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -148,7 +147,7 @@ public class GuiBackpack extends GuiContainer {
      */
     @Override
     protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
-        if (!(isEditMode == -1)) {
+        if (isEditMode != -1) {
             ((ContainerBackpack) this.inventorySlots).handleSlotInteraction(slotId, mouseButton);
             PacketHandler.sendToServer(new MemoryMessage(slotId, mouseButton));
             return;

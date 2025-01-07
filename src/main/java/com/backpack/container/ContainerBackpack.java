@@ -17,9 +17,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class ContainerBackpack extends Container {
 
-    // 日志记录器
     private static final Logger LOGGER = LogManager.getLogger();
-
     // 背包库存实例
     private final InventoryBackpackFunction backpackInventory;
 
@@ -74,55 +72,195 @@ public class ContainerBackpack extends Container {
      */
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
-        // 获取指定索引的槽位
         Slot slot = inventorySlots.get(index);
 
-        // 如果槽位为空或槽位中没有物品，则直接返回空物品堆
+        // 如果槽位为空或没有物品堆，直接返回空物品堆
         if (slot == null || !slot.getHasStack()) {
             return ItemStack.EMPTY;
         }
 
-        // 获取槽位中的原始物品堆，并创建一个副本用于后续比较
-        ItemStack originalStack = slot.getStack();
-        ItemStack copyStack = originalStack.copy();
+        ItemStack stack = slot.getStack();
+        ItemStack copy = stack.copy();
 
-        // 获取背包槽位的数量和总槽位数量
-        int backpackSize = this.backpackInventory.getSizeInventory();  // 背包槽位数量
-        int totalSlots = this.inventorySlots.size();  // 总槽位数量（包括背包和玩家库存
+        // 获取背包和总槽位的数量
+        int backpackSize = this.backpackInventory.getSizeInventory();
+        int totalSlots = this.inventorySlots.size();
 
-        // 尝试将物品从背包移到玩家库存，或从玩家库存移到背包
-        // 参数解释：
-        // - originalStack: 需要转移的物品堆
-        // - fromIndex: 起始槽位索引
-        // - toIndex: 结束槽位索引
-        // - useBlacklist: 是否使用黑名单（false 表示不使用）
-        // 如果是背包中的物品（index < backpackSize），则尝试将其移到玩家库存（从 backpackSize 开始到 totalSlots 结束）
-        // 如果是玩家库存中的物品（index >= backpackSize），则尝试将其移到背包（从 0 开始到 backpackSize 结束）
-        if (!mergeItemStack(originalStack, index < backpackSize ? backpackSize : 0,  // 起始槽位索引
-                index < backpackSize ? totalSlots : backpackSize,  // 结束槽位索引
-                false)) {  // 不使用黑名单
-            return ItemStack.EMPTY;  // 如果无法合并物品堆，则返回空物品堆
-        }
-
-        // 如果物品堆已经完全移出当前槽位（即槽位中的物品数量为 0），则将槽位设置为空
-        if (originalStack.isEmpty()) {
-            slot.putStack(ItemStack.EMPTY);  // 将槽位设置为空
+        // 确定起始和结束槽位索引
+        int startIndex, endIndex;
+        if (index < backpackSize) {
+            // 当前槽位是背包槽位，尝试将其移到玩家库存
+            startIndex = backpackSize;  // 起始槽位索引（玩家库存的第一个槽位）
+            endIndex = totalSlots;      // 结束槽位索引（总槽位数量）
         } else {
-            // 如果物品堆还有剩余，则更新槽位中的物品堆，并通知槽位内容发生变化
-            slot.putStack(originalStack);
-            slot.onSlotChanged();  // 通知槽位内容已更改
+            // 当前槽位是玩家库存槽位，尝试将其移到背包
+            startIndex = 0;             // 起始槽位索引（背包的第一个槽位）
+            endIndex = backpackSize;    // 结束槽位索引（背包槽位数量）
         }
 
-        // 如果物品堆的数量没有变化（即转移失败），则返回空物品堆
-        if (originalStack.getCount() == copyStack.getCount()) {
+        // 尝试合并物品堆
+        boolean mergeSuccessful = mergeItemStack(stack, startIndex, endIndex, false);
+
+        // 如果无法合并物品堆，则返回空物品堆
+        if (!mergeSuccessful) {
             return ItemStack.EMPTY;
         }
 
-        // 触发槽位的 onTake 事件，表示玩家拿走了物品
-        slot.onTake(playerIn, originalStack);
+        // 如果物品堆已经完全移出当前槽位，则将槽位设置为空
+        if (stack.isEmpty()) {
+            slot.putStack(ItemStack.EMPTY);
+        } else {
+            // 如果物品堆还有剩余，则更新槽位中的物品堆
+            slot.putStack(stack);
+            slot.onSlotChanged();  // 通知槽位内容已更改
+        }
 
-        // 返回转移前的物品堆副本，表示成功转移的物品
-        return copyStack;
+        // 触发 onTake 事件，表示玩家拿走了物品
+        slot.onTake(playerIn, stack);
+
+        // 如果物品堆数量没有变化，返回空物品堆；否则返回转移前的物品堆副本
+        return stack.getCount() == copy.getCount() ? ItemStack.EMPTY : copy;
+    }
+
+    @Override
+    protected boolean mergeItemStack(ItemStack stack, int startIndex, int endIndex, boolean reverseDirection) {
+        boolean flag = false;
+        int i = startIndex;
+
+        if (reverseDirection) {
+            i = endIndex - 1;
+        }
+
+        boolean flag1 = false;
+        boolean flag2 = false;
+        if (startIndex == 0) {
+            flag1 = true;
+            flag2 = true;
+        }
+
+        if (stack.isStackable()) {
+            while (!stack.isEmpty()) {
+                if (reverseDirection) {
+                    if (flag1 && i < startIndex) {
+                        flag1 = false;
+                        i = endIndex - 1;
+                    } else if (i < startIndex) {
+                        break;
+                    }
+                } else {
+                    if (flag1 && i >= endIndex) {
+                        flag1 = false;
+                        i = startIndex;
+                    } else if (i >= endIndex) {
+                        break;
+                    }
+                }
+
+                Slot slot = this.inventorySlots.get(i);
+                ItemStack itemstack = slot.getStack();
+                if (flag1){
+                    ItemStack memoryitemstack = this.backpackInventory.getMemoryItem(i);
+                    if ((itemstack.getItem() == memoryitemstack.getItem()) && !itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack)) {
+                        int j = itemstack.getCount() + stack.getCount();
+                        int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
+
+                        if (j <= maxSize) {
+                            stack.setCount(0);
+                            itemstack.setCount(j);
+                            slot.onSlotChanged();
+                            flag = true;
+                        } else if (itemstack.getCount() < maxSize) {
+                            stack.shrink(maxSize - itemstack.getCount());
+                            itemstack.setCount(maxSize);
+                            slot.onSlotChanged();
+                            flag = true;
+                        }
+                    }
+                } else if (!itemstack.isEmpty() && itemstack.getItem() == stack.getItem() && (!stack.getHasSubtypes() || stack.getMetadata() == itemstack.getMetadata()) && ItemStack.areItemStackTagsEqual(stack, itemstack)) {
+                    int j = itemstack.getCount() + stack.getCount();
+                    int maxSize = Math.min(slot.getSlotStackLimit(), stack.getMaxStackSize());
+
+                    if (j <= maxSize) {
+                        stack.setCount(0);
+                        itemstack.setCount(j);
+                        slot.onSlotChanged();
+                        flag = true;
+                    } else if (itemstack.getCount() < maxSize) {
+                        stack.shrink(maxSize - itemstack.getCount());
+                        itemstack.setCount(maxSize);
+                        slot.onSlotChanged();
+                        flag = true;
+                    }
+                }
+
+                if (reverseDirection) {
+                    --i;
+                } else {
+                    ++i;
+                }
+            }
+        }
+
+        if (!stack.isEmpty()) {
+            if (reverseDirection) {
+                i = endIndex - 1;
+            } else {
+                i = startIndex;
+            }
+
+            while (true) {
+                if (reverseDirection) {
+                    if (i < startIndex && flag2) {
+                        flag2 = false;
+                        i = endIndex - 1;
+                    } else if (i < startIndex) {
+                        break;
+                    }
+                } else {
+                    if (i >= endIndex && flag2) {
+                        flag2 = false;
+                        i = startIndex;
+                    } else if (i >= endIndex) {
+                        break;
+                    }
+                }
+
+                Slot slot1 = this.inventorySlots.get(i);
+                ItemStack itemstack1 = slot1.getStack();
+                if (flag2){
+                    ItemStack memoryitemstack1 = this.backpackInventory.getMemoryItem(i);
+                    if ((stack.getItem() == memoryitemstack1.getItem()) && itemstack1.isEmpty()) {
+                        if (stack.getCount() > slot1.getSlotStackLimit()) {
+                            slot1.putStack(stack.splitStack(slot1.getSlotStackLimit()));
+                        } else {
+                            slot1.putStack(stack.splitStack(stack.getCount()));
+                        }
+
+                        slot1.onSlotChanged();
+                        flag = true;
+                        break;
+                    }
+                } else if (itemstack1.isEmpty() && slot1.isItemValid(stack)) {
+                    if (stack.getCount() > slot1.getSlotStackLimit()) {
+                        slot1.putStack(stack.splitStack(slot1.getSlotStackLimit()));
+                    } else {
+                        slot1.putStack(stack.splitStack(stack.getCount()));
+                    }
+
+                    slot1.onSlotChanged();
+                    flag = true;
+                    break;
+                }
+
+                if (reverseDirection) {
+                    --i;
+                } else {
+                    ++i;
+                }
+            }
+        }
+
+        return flag;
     }
 
     public void handleSlotInteraction(int slotId, int mouseButton) {

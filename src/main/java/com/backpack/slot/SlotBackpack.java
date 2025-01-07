@@ -3,7 +3,6 @@ package com.backpack.slot;
 import com.backpack.inventory.InventoryBackpackFunction;
 import com.backpack.item.ItemModBackpack;
 import mcp.MethodsReturnNonnullByDefault;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -25,9 +24,9 @@ public class SlotBackpack extends Slot {
      * 初始化背包槽位
      *
      * @param backpackInventory 背包的库存对象
-     * @param index       槽位索引
-     * @param xPosition   槽位的X坐标
-     * @param yPosition   槽位的Y坐标
+     * @param index             槽位索引
+     * @param xPosition         槽位的X坐标
+     * @param yPosition         槽位的Y坐标
      */
     public SlotBackpack(InventoryBackpackFunction backpackInventory, int index, int xPosition, int yPosition) {
         super(backpackInventory, index, xPosition, yPosition);
@@ -58,7 +57,7 @@ public class SlotBackpack extends Slot {
         }
 
         // 比较放入的物品与记忆物品是否相同
-        return ItemStack.areItemStacksEqual(stack, memoryItem);
+        return stack.getItem() == memoryItem.getItem();
     }
 
     /**
