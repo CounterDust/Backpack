@@ -9,6 +9,7 @@ container.backpack=backpack
 
 # DescriptionOfTheKeyBindings
 key.openBackpack=openBackpack
+key.openSelect=openSelect
 
 # CustomKeybindingClassifications
 key.categories.backpack=Backpack

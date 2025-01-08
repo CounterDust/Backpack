@@ -1,6 +1,6 @@
 package com.backpack.slot;
 
-import com.backpack.inventory.InventoryBackpackFunction;
+import com.backpack.inventory.backpack.InventoryBackpackFunction;
 import com.backpack.item.ItemModBackpack;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.inventory.Slot;

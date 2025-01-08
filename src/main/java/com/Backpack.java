@@ -1,6 +1,6 @@
 package com;
 
-import com.backpack.gui.backpack.GuiHandler;
+import com.backpack.gui.GuiHandler;
 import com.backpack.keybindings.BackpackClientEvents;
 import com.backpack.keybindings.KeyBindings;
 import com.backpack.network.PacketHandler;
@@ -23,6 +23,7 @@ public class Backpack {
 
     // 定义GUI ID
     public static final int GUI_ID_BACKPACK = 0;
+    public static final int GUI_ID_SELECT = 1;
 
     // 模组实例
     @Mod.Instance(MODID)

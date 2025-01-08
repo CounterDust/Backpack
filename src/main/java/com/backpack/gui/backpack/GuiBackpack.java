@@ -2,7 +2,7 @@ package com.backpack.gui.backpack;
 
 import com.backpack.container.ContainerBackpack;
 import com.backpack.gui.button.Button;
-import com.backpack.inventory.InventoryBackpackFunction;
+import com.backpack.inventory.backpack.InventoryBackpackFunction;
 import com.backpack.keybindings.KeyBindings;
 import com.backpack.network.MemoryMessage;
 import com.backpack.network.PacketHandler;
@@ -18,8 +18,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentTranslation;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -33,11 +31,8 @@ import java.io.IOException;
 @MethodsReturnNonnullByDefault
 public class GuiBackpack extends GuiContainer {
 
-    // 日志记录器
-    private static final Logger LOGGER = LogManager.getLogger();
-
     // 定义背包GUI的纹理资源位置
-    private static final ResourceLocation TEXTURE = new ResourceLocation("backpack:textures/gui/backpackgui.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("backpack:textures/gui/backpack.png");
     // 当前打开的背包 ItemStack
     private final ItemStack openBackpackStack;
     // 记录槽位记忆编辑模式是否开启
@@ -153,11 +148,10 @@ public class GuiBackpack extends GuiContainer {
             return;
         } else {
             // 检查是否为快捷栏槽位且背包正在打开
-            if (slotIn != null && slotIn.getHasStack() && (type == ClickType.PICKUP)) {
+            if (slotId >=0 && slotIn.getHasStack() && (type == ClickType.PICKUP)) {
                 ItemStack stack = slotIn.getStack();
                 // 检查槽位中的物品是否是当前打开的背包
                 if (ItemStack.areItemStacksEqual(stack, openBackpackStack)) {
-                    LOGGER.info("阻止捡起当前打开的背包。");
                     return; // 阻止拾取
                 }
             }
@@ -182,8 +176,7 @@ public class GuiBackpack extends GuiContainer {
                 // 检查槽位中的物品是否是当前打开的背包
                 if (ItemStack.areItemStacksEqual(itemStack, this.openBackpackStack)) {
                     // 阻止丢弃行为
-                    LOGGER.info("Preventing discard of the currently opened backpack by drop key.");
-                    return;  // 不调用父类方法，阻止丢弃
+                    return;
                 }
             }
         }

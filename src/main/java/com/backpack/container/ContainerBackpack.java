@@ -1,6 +1,6 @@
 package com.backpack.container;
 
-import com.backpack.inventory.InventoryBackpackFunction;
+import com.backpack.inventory.backpack.InventoryBackpackFunction;
 import com.backpack.slot.SlotBackpack;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.player.EntityPlayer;
@@ -8,8 +8,6 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -17,7 +15,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @MethodsReturnNonnullByDefault
 public class ContainerBackpack extends Container {
 
-    private static final Logger LOGGER = LogManager.getLogger();
     // 背包库存实例
     private final InventoryBackpackFunction backpackInventory;
 
@@ -29,7 +26,6 @@ public class ContainerBackpack extends Container {
      * @param backpackInventory 背包实例
      */
     public ContainerBackpack(InventoryPlayer playerInventory, InventoryBackpackFunction backpackInventory) {
-
         this.backpackInventory = backpackInventory;
 
         // 添加背包槽位

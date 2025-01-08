@@ -1,6 +1,9 @@
 package com.backpack.gui.select;
 
-import net.minecraft.client.gui.GuiScreen;
+import com.backpack.container.ContainerSelect;
+import com.backpack.inventory.backpack.InventoryBackpackFunction;
+import com.backpack.keybindings.KeyBindings;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
@@ -8,64 +11,41 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 
-public class GuiSelect extends GuiScreen {
+public class GuiSelect extends GuiContainer {
 
     // 日志记录器
-    public static final Logger LOGGER = LogManager.getLogger();
-
+    private static final Logger LOGGER = LogManager.getLogger();
     // 定义背包GUI的纹理资源位置
-    private static final ResourceLocation TEXTURE = new ResourceLocation("backpack:textures/gui/selectgui.png");
+    private static final ResourceLocation TEXTURE = new ResourceLocation("backpack:textures/gui/select.png");
+
+    public GuiSelect(InventoryBackpackFunction backpackInventory) {
+        super(new ContainerSelect(backpackInventory));
+        this.xSize = 100;
+        this.ySize = 88;
+    }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        // 绘制默认背景
-        this.drawDefaultBackground();
-
-        // 绑定纹理
-        this.mc.getTextureManager().bindTexture(TEXTURE);
-
-        // 计算原始GUI的位置和大小
-        int guiWidth = 222; // GUI的宽度
-        int guiHeight = 196; // GUI的高度
-
-        // 应用缩放
-        float scale = 0.3f; // 缩放因子，例如0.8表示缩小到80%
-
-        // 计算缩放后的GUI尺寸
-        int scaledGuiWidth = (int)(guiWidth * scale);
-        int scaledGuiHeight = (int)(guiHeight * scale);
-
-        // 计算缩放后的中心位置
-        int x = (this.width - scaledGuiWidth) / 2; // 水平居中
-        int y = (this.height - scaledGuiHeight) / 2; // 垂直居中
-
-        // 保存当前变换矩阵
-        GlStateManager.pushMatrix();
-
-        // 平移至目标位置
-        GlStateManager.translate(x, y, 0);
-
-        // 应用缩放
-        GlStateManager.scale(scale, scale, scale);
-
-        // 绘制GUI背景
-        // 注意: 由于我们已经通过translate移动到了正确的位置，这里传入0, 0作为起始点
-        this.drawTexturedModalRect(0, 0, 0, 0, guiWidth, guiHeight);
-
-        // 恢复原始变换矩阵
-        GlStateManager.popMatrix();
-
-        // 调用父类的drawScreen方法以确保其他必要的绘制操作
         super.drawScreen(mouseX, mouseY, partialTicks);
+        this.renderHoveredToolTip(mouseX, mouseY);
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        mc.getTextureManager().bindTexture(TEXTURE);
+        drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
     }
 
     @Override
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        // 如果按下ESC键，关闭GUI
-        if (keyCode == this.mc.gameSettings.keyBindInventory.getKeyCode()) {
-            this.mc.displayGuiScreen(null);
-        } else {
-            super.keyTyped(typedChar, keyCode);
+        // 检查是否是打开背包的键被按下
+        if (keyCode == KeyBindings.OPEN_BACKPACK.getKeyCode()) {
+            // 关闭背包 GUI
+            this.mc.player.closeScreen();
+            return;
         }
+        // 如果不是关闭背包的键，则调用父类的 keyTyped 方法
+        super.keyTyped(typedChar, keyCode);
     }
 }

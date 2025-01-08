@@ -10,8 +10,17 @@ public class KeyBindings {
     public static final KeyBinding OPEN_BACKPACK = new KeyBinding(
             // 键绑定的名称，用于语言文件
             "key.openBackpack",
-            // 默认的按键，这里设置为P键
+            // 默认的按键，这里设置为B键
             Keyboard.KEY_B,
+            // 键绑定的分类
+            "key.categories.backpack"
+    );
+
+    public static final KeyBinding OPEN_SELECT = new KeyBinding(
+            // 键绑定的名称，用于语言文件
+            "key.openSelect",
+            // 默认的按键，这里设置为NONE键
+            Keyboard.KEY_NONE,
             // 键绑定的分类
             "key.categories.backpack"
     );
@@ -21,6 +30,6 @@ public class KeyBindings {
      */
     public static void init() {
         ClientRegistry.registerKeyBinding(OPEN_BACKPACK);
-        // 如果有更多键绑定，继续在这里注册
+        ClientRegistry.registerKeyBinding(OPEN_SELECT);
     }
 }

@@ -1,4 +1,4 @@
-package com.backpack.inventory;
+package com.backpack.inventory.backpack;
 
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.item.ItemStack;
@@ -13,7 +13,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class InventoryBackpackFunction extends InventoryBackpack{
+public class InventoryBackpackFunction extends InventoryBackpack {
     // 日志记录器
     private static final Logger LOGGER = LogManager.getLogger();
 

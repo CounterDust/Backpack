@@ -1,4 +1,4 @@
-package com.backpack.inventory;
+package com.backpack.inventory.backpack;
 
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.player.EntityPlayer;

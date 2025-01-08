@@ -64,7 +64,6 @@ public class OpenBackpackMessage implements IMessage {
             ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
                 EntityPlayer player = ctx.getServerHandler().player;
 
-                // 使用传递的槽位索引来获取背包物品
                 ItemStack backpackItem = player.inventory.getStackInSlot(message.slotIndex);
 
                 if (!backpackItem.isEmpty() && backpackItem.getItem() instanceof ItemModBackpack) {
