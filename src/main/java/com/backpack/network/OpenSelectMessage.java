@@ -42,7 +42,7 @@ public class OpenSelectMessage implements IMessage {
 
                 if (!backpackItem.isEmpty() && backpackItem.getItem() instanceof ItemModBackpack) {
                     // 打开 Select GUI
-                    player.openGui(Backpack.INSTANCE, Backpack.GUI_ID_SELECT, player.getEntityWorld(), 0, 0, 0);
+                    player.openGui(Backpack.INSTANCE, Backpack.GUI_ID_SELECT, player.getEntityWorld(), message.slotIndex, 0, 0);
                 }
             });
             return null;

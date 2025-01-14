@@ -1,7 +1,7 @@
 package com.backpack.gui.backpack;
 
 import com.backpack.container.ContainerBackpack;
-import com.backpack.gui.button.Button;
+import com.backpack.gui.button.CustomButton;
 import com.backpack.inventory.backpack.InventoryBackpackFunction;
 import com.backpack.keybindings.KeyBindings;
 import com.backpack.network.MemoryMessage;
@@ -33,18 +33,20 @@ public class GuiBackpack extends GuiContainer {
 
     // 定义背包GUI的纹理资源位置
     private static final ResourceLocation TEXTURE = new ResourceLocation("backpack:textures/gui/backpack.png");
+    // 定义按钮的纹理资源位置
+    private static final ResourceLocation BUTTON_TEXTURE = new ResourceLocation("backpack:textures/gui/icons.png");
     // 当前打开的背包 ItemStack
     private final ItemStack openBackpackStack;
+    // 背包库存
+    private final InventoryBackpackFunction backpackInventory;
     // 记录槽位记忆编辑模式是否开启
     private int isEditMode = -1;
-
-    private final InventoryBackpackFunction backpackInventory;
 
     /**
      * 构造函数，初始化背包GUI。
      *
      * @param playerInventory   玩家的库存
-     * @param backpackInventory          背包的库存
+     * @param backpackInventory 背包的库存
      * @param backpackSlotIndex 当前打开的背包所在的槽位索引
      */
     public GuiBackpack(InventoryPlayer playerInventory, InventoryBackpackFunction backpackInventory, int backpackSlotIndex) {
@@ -60,7 +62,7 @@ public class GuiBackpack extends GuiContainer {
     @Override
     public void initGui() {
         super.initGui();
-        this.buttonList.add(new Button(0, this.guiLeft + 26, this.guiTop + 5, ""));
+        this.buttonList.add(new CustomButton(0, this.guiLeft + 26, this.guiTop + 5, 12, 10, "", BUTTON_TEXTURE, 2, 3));
     }
 
     @Override
@@ -148,7 +150,7 @@ public class GuiBackpack extends GuiContainer {
             return;
         } else {
             // 检查是否为快捷栏槽位且背包正在打开
-            if (slotId >=0 && slotIn.getHasStack() && (type == ClickType.PICKUP)) {
+            if (slotId >= 0 && slotIn.getHasStack() && (type == ClickType.PICKUP)) {
                 ItemStack stack = slotIn.getStack();
                 // 检查槽位中的物品是否是当前打开的背包
                 if (ItemStack.areItemStacksEqual(stack, openBackpackStack)) {

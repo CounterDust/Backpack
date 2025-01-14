@@ -1,6 +1,5 @@
 package com.backpack.keybindings;
 
-import com.backpack.gui.backpack.GuiBackpack;
 import com.backpack.item.ItemModBackpack;
 import com.backpack.network.OpenBackpackMessage;
 import com.backpack.network.OpenSelectMessage;
@@ -19,24 +18,26 @@ public class BackpackClientEvents {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.KeyInputEvent event) {
 
-        if (KeyBindings.OPEN_BACKPACK.isKeyDown() && findFirstBackpack()) {
-            PacketHandler.sendToServer(new OpenBackpackMessage());
+        if (KeyBindings.OPEN_SELECT.isKeyDown()) {
+            int slotIndex = findFirstBackpack();
+            PacketHandler.sendToServer(new OpenSelectMessage(slotIndex));
             return;
         }
-        if (KeyBindings.OPEN_SELECT.isKeyDown() && findFirstBackpack()) {
-            PacketHandler.sendToServer(new OpenSelectMessage());
+        if (KeyBindings.OPEN_BACKPACK.isKeyDown()) {
+            int slotIndex = findFirstBackpack();
+            PacketHandler.sendToServer(new OpenBackpackMessage(slotIndex));
         }
     }
 
-    private static boolean findFirstBackpack() {
+    private static int findFirstBackpack() {
         Minecraft mc = Minecraft.getMinecraft();
         EntityPlayer player = mc.player;
         for (int i = 0; i < player.inventory.getSizeInventory(); i++) {
             ItemStack itemStack = player.inventory.getStackInSlot(i);
             if (!itemStack.isEmpty() && itemStack.getItem() instanceof ItemModBackpack) {
-                return true;
+                return i;
             }
         }
-        return false;
+        return -1;
     }
 }

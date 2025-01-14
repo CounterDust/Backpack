@@ -16,10 +16,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 public class InventoryBackpackFunction extends InventoryBackpack {
     // 日志记录器
     private static final Logger LOGGER = LogManager.getLogger();
-
     // 用于存储记忆物品的列表
     private final NonNullList<ItemStack> memoryItems;
-
     // 记忆物品的 NBT 标签名称
     private static final String MEMORY_ITEMS_TAG = "MemoryItems";
 

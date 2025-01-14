@@ -29,17 +29,17 @@ public class GuiHandler implements IGuiHandler {
     public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
         switch (ID) {
             case Backpack.GUI_ID_BACKPACK:
-                ItemStack backpackItem1 = player.inventory.getStackInSlot(x);
-                if (!backpackItem1.isEmpty() && backpackItem1.getItem() instanceof ItemModBackpack) {
-                    return new ContainerBackpack(player.inventory, new InventoryBackpackFunction(backpackItem1));
+                ItemStack backpackItem = player.inventory.getStackInSlot(x);
+                if (!backpackItem.isEmpty() && backpackItem.getItem() instanceof ItemModBackpack) {
+                    return new ContainerBackpack(player.inventory, new InventoryBackpackFunction(backpackItem));
                 } else {
                     LOGGER.warn("服务器，玩家打开背包界面 {} 在槽位 {} 中没有背包。", player.getName(), x);
                 }
                 break;
             case Backpack.GUI_ID_SELECT:
-                ItemStack backpackItem2 = player.inventory.getStackInSlot(x);
-                if (!backpackItem2.isEmpty() && backpackItem2.getItem() instanceof ItemModBackpack) {
-                    return new ContainerSelect(new InventoryBackpackFunction(backpackItem2));
+                ItemStack backpackItem1 = player.inventory.getStackInSlot(x);
+                if (!backpackItem1.isEmpty() && backpackItem1.getItem() instanceof ItemModBackpack) {
+                    return new ContainerSelect(player.inventory, new InventoryBackpackFunction(backpackItem1));
                 } else {
                     LOGGER.warn("服务器，玩家打开选择界面 {} 在槽位 {} 中没有背包。", player.getName(), x);
                 }
@@ -63,7 +63,7 @@ public class GuiHandler implements IGuiHandler {
             case Backpack.GUI_ID_SELECT:
                 ItemStack backpackItem1 = player.inventory.getStackInSlot(x);
                 if (!backpackItem1.isEmpty() && backpackItem1.getItem() instanceof ItemModBackpack) {
-                    return new GuiSelect(new InventoryBackpackFunction(backpackItem1));
+                    return new GuiSelect(player.inventory, new InventoryBackpackFunction(backpackItem1));
                 } else {
                     LOGGER.warn("客户端，玩家打开选择界面 {} 在槽位 {} 中没有背包。", player.getName(), x);
                 }
