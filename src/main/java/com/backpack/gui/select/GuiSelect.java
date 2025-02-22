@@ -8,10 +8,15 @@ import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.opengl.GL11;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
@@ -26,11 +31,17 @@ public class GuiSelect extends GuiContainer {
     private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation("backpack:textures/gui/select.png");
     // 定义按钮的纹理资源位置
     private static final ResourceLocation BUTTON_TEXTURE = new ResourceLocation("backpack:textures/gui/icons.png");
+    // 背包库存
+    private final InventoryBackpackFunction backpackInventory;
+    //
+    private final EntityPlayer player;
 
-    public GuiSelect(InventoryPlayer playerInventory, InventoryBackpackFunction backpackInventory) {
+    public GuiSelect(EntityPlayer player, InventoryPlayer playerInventory, InventoryBackpackFunction backpackInventory) {
         super(new ContainerSelect(playerInventory, backpackInventory));
         this.xSize = 100;
         this.ySize = 88;
+        this.backpackInventory = backpackInventory;
+        this.player = player;
     }
 
     @Override
@@ -44,6 +55,41 @@ public class GuiSelect extends GuiContainer {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         this.renderHoveredToolTip(mouseX, mouseY);
+    }
+
+    @Override
+    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+        // 开始绘制前设置渲染状态
+        GlStateManager.pushMatrix();
+        RenderHelper.disableStandardItemLighting();
+        GlStateManager.disableLighting(); // 禁用光照
+        GlStateManager.disableDepth(); // 禁用深度测试
+        RenderHelper.enableGUIStandardItemLighting();
+        GlStateManager.enableBlend(); // 启用混合
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0); // 混合模式
+
+        for (int slotId = 0; slotId < this.backpackInventory.getSizeInventory() - 27; ++slotId) {
+            Slot slot = this.inventorySlots.getSlot(slotId);
+            ItemStack itemstack = slot.getStack();
+            ItemStack memoryItem = this.backpackInventory.getMemoryItem(slotId + 27);
+
+            if (itemstack.isEmpty() && !(memoryItem.isEmpty())) {
+                int x = slot.xPos;
+                int y = slot.yPos;
+
+                // 绘制物品
+                this.mc.getRenderItem().renderItemAndEffectIntoGUI(memoryItem, x, y);
+
+                // 叠加半透明黑色遮罩
+                drawRect(x, y, x + 16, y + 16, 0x99000000); // 半透明黑色遮罩（99 表示透明度）
+            }
+        }
+
+        // 结束绘制后恢复渲染状态
+        GlStateManager.enableDepth();
+        GlStateManager.enableLighting();
+        GlStateManager.disableBlend();
+        GlStateManager.popMatrix();
     }
 
     @Override
@@ -68,7 +114,7 @@ public class GuiSelect extends GuiContainer {
     @Override
     protected void actionPerformed(GuiButton button) {
         if (button.id == 0) {
-
+            ((ContainerSelect) this.inventorySlots).buttonClicked(player);
         }
     }
 }

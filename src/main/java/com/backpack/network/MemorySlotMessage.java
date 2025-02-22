@@ -11,7 +11,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 /**
  * 用于处理背包槽位交互的网络消息
  */
-public class MemoryMessage implements IMessage {
+public class MemorySlotMessage implements IMessage {
 
     // 槽位ID
     private int slotId;
@@ -21,7 +21,7 @@ public class MemoryMessage implements IMessage {
     /**
      * 默认构造函数，用于反序列化
      */
-    public MemoryMessage() {
+    public MemorySlotMessage() {
     }
 
     /**
@@ -30,7 +30,7 @@ public class MemoryMessage implements IMessage {
      * @param slotId     槽位ID
      * @param mouseButton 鼠标按钮
      */
-    public MemoryMessage(int slotId, int mouseButton) {
+    public MemorySlotMessage(int slotId, int mouseButton) {
         this.slotId = slotId;
         this.mouseButton = mouseButton;
     }
@@ -58,7 +58,7 @@ public class MemoryMessage implements IMessage {
     }
 
     // 处理服务器端的消息
-    public static class Handler implements IMessageHandler<MemoryMessage, IMessage> {
+    public static class Handler implements IMessageHandler<MemorySlotMessage, IMessage> {
         /**
          * 当消息到来时，服务器端调用此方法进行处理
          *
@@ -67,7 +67,7 @@ public class MemoryMessage implements IMessage {
          * @return 回复的消息，此处为null
          */
         @Override
-        public IMessage onMessage(MemoryMessage message, MessageContext ctx) {
+        public IMessage onMessage(MemorySlotMessage message, MessageContext ctx) {
             // 在服务器线程中处理消息
             ctx.getServerHandler().player.getServerWorld().addScheduledTask(() -> {
                 EntityPlayerMP player = ctx.getServerHandler().player;

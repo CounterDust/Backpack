@@ -13,7 +13,7 @@ public class PacketHandler {
     public static void init() {
         // 注册 OpenBackpackMessage 消息，从客户端发送到服务器
         INSTANCE.registerMessage(OpenBackpackMessage.Handler.class, OpenBackpackMessage.class, 0, Side.SERVER);
-        INSTANCE.registerMessage(MemoryMessage.Handler.class, MemoryMessage.class, 1, Side.SERVER);
+        INSTANCE.registerMessage(MemorySlotMessage.Handler.class, MemorySlotMessage.class, 1, Side.SERVER);
         INSTANCE.registerMessage(OpenSelectMessage.Handler.class, OpenSelectMessage.class, 2, Side.SERVER);
     }
 

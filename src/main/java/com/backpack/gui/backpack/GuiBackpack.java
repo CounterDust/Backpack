@@ -4,7 +4,7 @@ import com.backpack.container.ContainerBackpack;
 import com.backpack.gui.button.CustomButton;
 import com.backpack.inventory.backpack.InventoryBackpackFunction;
 import com.backpack.keybindings.KeyBindings;
-import com.backpack.network.MemoryMessage;
+import com.backpack.network.MemorySlotMessage;
 import com.backpack.network.PacketHandler;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.client.gui.GuiButton;
@@ -146,7 +146,7 @@ public class GuiBackpack extends GuiContainer {
     protected void handleMouseClick(Slot slotIn, int slotId, int mouseButton, ClickType type) {
         if (isEditMode != -1) {
             ((ContainerBackpack) this.inventorySlots).handleSlotInteraction(slotId, mouseButton);
-            PacketHandler.sendToServer(new MemoryMessage(slotId, mouseButton));
+            PacketHandler.sendToServer(new MemorySlotMessage(slotId, mouseButton));
             return;
         } else {
             // 检查是否为快捷栏槽位且背包正在打开

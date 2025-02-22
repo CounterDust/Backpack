@@ -130,4 +130,20 @@ public class ContainerSelect extends Container {
         }
         return itemstack;
     }
+
+    public void buttonClicked(EntityPlayer player) {
+        ItemStack itemstack = player.getHeldItemMainhand();
+        if (!itemstack.isEmpty()) {
+            for (Slot slot : this.inventorySlots) {
+                if (slot.getStack().isEmpty()) {
+                    slot.putStack(itemstack.copy());
+                    player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                    slot.onSlotChanged();
+                    if (!player.world.isRemote) {
+                        player.closeScreen();
+                    }
+                }
+            }
+        }
+    }
 }
