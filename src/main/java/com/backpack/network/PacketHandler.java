@@ -15,6 +15,7 @@ public class PacketHandler {
         INSTANCE.registerMessage(OpenBackpackMessage.Handler.class, OpenBackpackMessage.class, 0, Side.SERVER);
         INSTANCE.registerMessage(MemorySlotMessage.Handler.class, MemorySlotMessage.class, 1, Side.SERVER);
         INSTANCE.registerMessage(OpenSelectMessage.Handler.class, OpenSelectMessage.class, 2, Side.SERVER);
+        INSTANCE.registerMessage(SelectQuickMove.Handler.class, SelectQuickMove.class, 3, Side.SERVER);
     }
 
     // 获取 SimpleNetworkWrapper 实例

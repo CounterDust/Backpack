@@ -1,6 +1,8 @@
 package com.backpack.container;
 
 import com.backpack.inventory.backpack.InventoryBackpackFunction;
+import com.backpack.network.PacketHandler;
+import com.backpack.network.SelectQuickMove;
 import com.backpack.slot.SlotBackpack;
 import mcp.MethodsReturnNonnullByDefault;
 import net.minecraft.entity.player.EntityPlayer;
@@ -132,17 +134,54 @@ public class ContainerSelect extends Container {
     }
 
     public void buttonClicked(EntityPlayer player) {
-        ItemStack itemstack = player.getHeldItemMainhand();
-        if (!itemstack.isEmpty()) {
+        ItemStack mainHandStack = player.getHeldItemMainhand();
+        if (!mainHandStack.isEmpty()) {
+            // 遍历所有槽位直到主手物品放完
             for (Slot slot : this.inventorySlots) {
-                if (slot.getStack().isEmpty()) {
-                    slot.putStack(itemstack.copy());
+                if (mainHandStack.isEmpty()) break; // 提前终止条件
+
+                ItemStack slotStack = slot.getStack();
+
+                // 情况1：槽位为空
+                if (slotStack.isEmpty()) {
+                    // 放入整个堆叠
+                    slot.putStack(mainHandStack.copy());
                     player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
                     slot.onSlotChanged();
-                    if (!player.world.isRemote) {
-                        player.closeScreen();
+                    break;
+                }
+
+                // 情况2：槽位非空但物品相同
+                if (ItemStack.areItemsEqual(slotStack, mainHandStack)
+                        && ItemStack.areItemStackTagsEqual(slotStack, mainHandStack)) {
+
+                    int maxStackSize = slotStack.getMaxStackSize();
+                    int canAdd = maxStackSize - slotStack.getCount();
+
+                    if (canAdd > 0) {
+                        int actualAdd = Math.min(canAdd, mainHandStack.getCount());
+
+                        // 增加槽位数量
+                        slotStack.grow(actualAdd);
+                        // 减少主手数量
+                        mainHandStack.shrink(actualAdd);
+
+                        slot.onSlotChanged();
+
+                        // 主手物品耗尽时清空
+                        if (mainHandStack.getCount() <= 0) {
+                            player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                        }
                     }
                 }
+            }
+
+            // 最后进行环境判断
+            if (player.world.isRemote) {
+                // 客户端发送网络包
+                PacketHandler.sendToServer(new SelectQuickMove());
+            } else {
+                player.closeScreen();
             }
         }
     }

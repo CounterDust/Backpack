@@ -259,15 +259,24 @@ public class ContainerBackpack extends Container {
         return flag;
     }
 
+    /**
+     * 处理背包中槽的交互事件
+     * @param slotId 槽的ID
+     * @param mouseButton 鼠标按钮，0表示左键，1表示右键
+     */
     public void handleSlotInteraction(int slotId, int mouseButton) {
+        // 确保槽ID在背包库存的有效范围内
         if (slotId >= 0 && slotId < this.backpackInventory.getSizeInventory()) {
+            // 根据鼠标按钮决定是设置记忆中的物品还是清除记忆中的物品
             if (mouseButton == 0) {
                 Slot slot = this.inventorySlots.get(slotId);
                 ItemStack stack = slot.getStack();
+                // 左键点击时，将当前槽中的物品设置为记忆中的物品
                 if (!stack.isEmpty()) {
                     this.backpackInventory.setMemoryItem(slotId, stack);
                 }
             } else if (mouseButton == 1) {
+                // 右键点击时，清除当前槽中的记忆物品
                 this.backpackInventory.clearMemoryItem(slotId);
             }
         }
