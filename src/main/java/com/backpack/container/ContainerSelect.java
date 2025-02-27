@@ -140,40 +140,42 @@ public class ContainerSelect extends Container {
             for (Slot slot : this.inventorySlots) {
                 if (mainHandStack.isEmpty()) break; // 提前终止条件
 
+                int slotIndex = slot.getSlotIndex();
                 ItemStack slotStack = slot.getStack();
 
-                // 情况1：槽位为空
-                if (slotStack.isEmpty()) {
-                    // 放入整个堆叠
-                    slot.putStack(mainHandStack.copy());
-                    player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
-                    slot.onSlotChanged();
-                    break;
+                // ===== 分层检测逻辑 =====
+                // 阶段1：槽位非空时检测现有物品
+                if (!slotStack.isEmpty()) {
+                    // 现有物品与主手物品是否匹配（类型+NBT）
+                    boolean itemMatch = ItemStack.areItemsEqual(slotStack, mainHandStack)
+                            && ItemStack.areItemStackTagsEqual(slotStack, mainHandStack);
+
+                    if (!itemMatch) {
+                        continue; // 现有物品不匹配，跳过该槽位
+                    }
+
+                    // 执行合并逻辑（原有代码）
+                    handleStackMerge(slot, mainHandStack, player);
+                    continue; // 处理完成后进入下一个槽位
                 }
 
-                // 情况2：槽位非空但物品相同
-                if (ItemStack.areItemsEqual(slotStack, mainHandStack)
-                        && ItemStack.areItemStackTagsEqual(slotStack, mainHandStack)) {
+                // 阶段2：槽位为空时检测记忆标签
+                ItemStack memoryTag = backpackInventory.getMemoryItem(slotIndex);
+                if (!memoryTag.isEmpty()) {
+                    // 记忆标签存在时检测匹配性
+                    boolean tagMatch = ItemStack.areItemsEqual(memoryTag, mainHandStack)
+                            && ItemStack.areItemStackTagsEqual(memoryTag, mainHandStack);
 
-                    int maxStackSize = slotStack.getMaxStackSize();
-                    int canAdd = maxStackSize - slotStack.getCount();
-
-                    if (canAdd > 0) {
-                        int actualAdd = Math.min(canAdd, mainHandStack.getCount());
-
-                        // 增加槽位数量
-                        slotStack.grow(actualAdd);
-                        // 减少主手数量
-                        mainHandStack.shrink(actualAdd);
-
-                        slot.onSlotChanged();
-
-                        // 主手物品耗尽时清空
-                        if (mainHandStack.getCount() <= 0) {
-                            player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
-                        }
+                    if (!tagMatch) {
+                        continue; // 不匹配记忆标签，跳过
                     }
                 }
+
+                // 阶段3：通过所有检测，执行放入操作
+                slot.putStack(mainHandStack.copy());
+                player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
+                slot.onSlotChanged();
+                break; // 主手物品已清空，终止循环
             }
 
             // 最后进行环境判断
@@ -182,6 +184,24 @@ public class ContainerSelect extends Container {
                 PacketHandler.sendToServer(new SelectQuickMove());
             } else {
                 player.closeScreen();
+            }
+        }
+    }
+
+    // 提取合并操作为独立方法
+    private void handleStackMerge(Slot slot, ItemStack mainHandStack, EntityPlayer player) {
+        ItemStack slotStack = slot.getStack();
+        int maxStackSize = slotStack.getMaxStackSize();
+        int canAdd = maxStackSize - slotStack.getCount();
+
+        if (canAdd > 0) {
+            int actualAdd = Math.min(canAdd, mainHandStack.getCount());
+            slotStack.grow(actualAdd);
+            mainHandStack.shrink(actualAdd);
+            slot.onSlotChanged();
+
+            if (mainHandStack.getCount() <= 0) {
+                player.setHeldItem(EnumHand.MAIN_HAND, ItemStack.EMPTY);
             }
         }
     }
